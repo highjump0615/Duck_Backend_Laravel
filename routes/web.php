@@ -14,7 +14,6 @@
 Auth::routes();
 
 Route::group(['middleware' => ['auth']], function() {
-    Route::get('/', function () {
-        return view('welcome');
-    });
+    Route::get('/', 'OrderController@getOrderList');
+    Route::get('/logout', 'Auth\LoginController@logout');
 });

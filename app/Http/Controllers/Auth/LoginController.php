@@ -37,15 +37,4 @@ class LoginController extends Controller
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
-
-//    /**
-//     * 登录成功
-//     * @param Request $request
-//     * @param $user
-//     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-//     */
-//    protected function authenticated(Request $request, $user)
-//    {
-//        return redirect('/');
-//    }
 }
