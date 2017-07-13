@@ -22,7 +22,11 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/user/detail/{id}', 'UserController@showDetail');
     Route::get('/user/remove/{id}', 'UserController@deleteUser');
 
-    // ËÆ¢Âçï
+    Route::get('/category', 'ProductController@showCategory');
+    Route::get('/category_add', 'ProductController@category_add');
+    Route::post('/category', 'ProductController@saveCategory');
+
+	// ∂©µ•
     Route::get('/', 'OrderController@getOrderList');
     Route::get('/order/detail/{id}', 'OrderController@showOrder');
 });

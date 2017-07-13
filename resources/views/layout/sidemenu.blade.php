@@ -32,7 +32,7 @@
             <dd @if ($menu == "product")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "product.category") class="current" @endif>
-                        <a href="product-category.php" title="分类管理">分类管理</a>
+                        <a href="{{url('/category')}}" title="分类管理">分类管理</a>
                     </li>
                     <li @if ($page == "product.list") class="current" @endif>
                         <a href="product-list.php" title="产品列表">产品列表</a>
