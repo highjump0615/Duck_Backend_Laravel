@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="<?=asset('lib/Hui-iconfont/1.0.8/iconfont.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/skin/default/skin.css') ?>" id="skin" />
     <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/css/style.css') ?>" />
+    <link rel="stylesheet" href="<?=asset('lib/zTree/v3/css/zTreeStyle/zTreeStyle.css')?>" type="text/css">
     <title>皇老鸭</title>
 </head>
 <body>
@@ -24,7 +25,7 @@
 <script type="text/javascript" src="<?=asset('lib/layer/2.4/layer.js') ?>"></script>
 <script type="text/javascript" src="<?=asset('static/h-ui/js/H-ui.js') ?>"></script>
 <script type="text/javascript" src="<?=asset('static/h-ui.admin/js/H-ui.admin.page.js') ?>"></script>
-
+<script type="text/javascript" src="<?=asset('lib/zTree/v3/js/jquery.ztree.all-3.5.min.js')?>"></script>
 @yield('script')
 
 </body>

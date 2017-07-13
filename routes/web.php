@@ -21,4 +21,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/user/save', 'UserController@saveUser');
     Route::get('/user/detail/{id}', 'UserController@showDetail');
     Route::get('/user/remove/{id}', 'UserController@deleteUser');
+
+    Route::get('/category', 'ProductController@showCategory');
+    Route::get('/category_add', 'ProductController@category_add');
+    Route::post('/category', 'ProductController@saveCategory');
 });
