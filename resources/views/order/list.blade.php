@@ -1,76 +1,79 @@
 @extends('layout.master')
 
 @section('content')
-<section class="Hui-article-box">
-    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 주문관리 <span class="c-gray en">&gt;</span> 주문목록 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
-    <div class="Hui-article">
-        <div>
-            <div class="pd-20">
-                <div class="cl pd-5 bg-1 bk-gray">
-					<span class="l">
-						<a class="btn btn-primary radius" onclick="product_add('添加产品','order-detail.php')" href="javascript:;">
-						<i class="Hui-iconfont">&#xe600;</i> 添加产品</a>
-					</span>
-                    <span class="r">共有数据：<strong>54</strong> 条</span>
-                </div>
-                <div class="mt-20">
-                    <table class="table table-border table-bordered table-bg table-hover table-sort">
-                        <thead>
-                        <tr class="text-c">
-                            <th width="40">주문번호</th>
-                            <th>상품이름</th>
-                            <th width="100">분류</th>
-                            <th width="60">수량</th>
-                            <th width="100">규격</th>
-                            <th width="60">이름</th>
-                            <th width="100">전화번호</th>
-                            <th width="100">배달방식</th>
-                            <th width="100">그룹상태</th>
-                            <th width="100">그룹정보</th>
-                            <th width="100">지불상태</th>
-                            <th width="100">지불금액</th>
-                            <th width="100">주문상태</th>
-                            <th width="100">주문리력</th>
-                            <th width="100">운송번호</th>
-                            <th width="100">비고</th>
-                            <th width="100">操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr class="text-c va-m">
-                            <td>001</td>
-                            <td>상품1</td>
-                            <td class="text-l">분류1</td>
-                            <td class="text-l">수량</td>
-                            <td class="text-l">규격</td>
-                            <td class="text-l">이름</td>
-                            <td class="text-l">전화번호</td>
-                            <td class="text-l">배달방식</td>
-                            <td class="text-l">그룹상태</td>
-                            <td class="text-l">그룹정보</td>
-                            <td class="text-l">지불상태</td>
-                            <td><span class="price">356.0</span> 元</td>
-                            <td class="td-status">주문상태</td>
-                            <td><a onClick="orderhistory_show('哥本哈根橡木地板','order-history.php','10001')" href="javascript:;">주문리력</a></td>
-                            <td class="text-l">운송번호</td>
-                            <td class="text-l">비고</td>
-                            <td class="td-manage"><a style="text-decoration:none" onClick="product_stop(this,'10001')" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a> <a style="text-decoration:none" class="ml-5" onClick="product_edit('产品编辑','order-detail.php','10001')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5" onClick="product_del(this,'10001')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
-                        </tr>
-                        </tbody>
-                    </table>
+
+    @include('layout.header')
+    @include('layout.sidemenu')
+
+    <section class="Hui-article-box">
+        <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 주문관리 <span class="c-gray en">&gt;</span> 주문목록 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+        <div class="Hui-article">
+            <div>
+                <div class="pd-20">
+                    <div class="cl pd-5 bg-1 bk-gray">
+                        <span class="l">
+                            <a class="btn btn-primary radius" onclick="product_add('添加产品','order-detail.php')" href="javascript:;">
+                            <i class="Hui-iconfont">&#xe600;</i> 添加产品</a>
+                        </span>
+                        <span class="r">共有数据：<strong>54</strong> 条</span>
+                    </div>
+                    <div class="mt-20">
+                        <table class="table table-border table-bordered table-bg table-hover table-sort">
+                            <thead>
+                            <tr class="text-c">
+                                <th width="40">주문번호</th>
+                                <th>상품이름</th>
+                                <th width="100">분류</th>
+                                <th width="60">수량</th>
+                                <th width="100">규격</th>
+                                <th width="60">이름</th>
+                                <th width="100">전화번호</th>
+                                <th width="100">배달방식</th>
+                                <th width="100">그룹상태</th>
+                                <th width="100">그룹정보</th>
+                                <th width="100">지불상태</th>
+                                <th width="100">지불금액</th>
+                                <th width="100">주문상태</th>
+                                <th width="100">주문리력</th>
+                                <th width="100">운송번호</th>
+                                <th width="100">비고</th>
+                                <th width="100">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="text-c va-m">
+                                <td>001</td>
+                                <td>상품1</td>
+                                <td class="text-l">분류1</td>
+                                <td class="text-l">수량</td>
+                                <td class="text-l">규격</td>
+                                <td class="text-l">이름</td>
+                                <td class="text-l">전화번호</td>
+                                <td class="text-l">배달방식</td>
+                                <td class="text-l">그룹상태</td>
+                                <td class="text-l">그룹정보</td>
+                                <td class="text-l">지불상태</td>
+                                <td><span class="price">356.0</span> 元</td>
+                                <td class="td-status">주문상태</td>
+                                <td><a onClick="orderhistory_show('哥本哈根橡木地板','order-history.php','10001')" href="javascript:;">주문리력</a></td>
+                                <td class="text-l">운송번호</td>
+                                <td class="text-l">비고</td>
+                                <td class="td-manage"><a style="text-decoration:none" onClick="product_stop(this,'10001')" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a> <a style="text-decoration:none" class="ml-5" onClick="product_edit('产品编辑','order-detail.php','10001')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5" onClick="product_del(this,'10001')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
-</section>
+        </div>
+    </section>
 @endsection
 
 @section('script')
 <!--请在下方写此页面业务相关的脚本-->
-<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
-<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="<?=asset('lib/datatables/1.10.0/jquery.dataTables.min.js') ?>"></script>
+<script type="text/javascript" src="<?=asset('lib/laypage/1.2/laypage.js') ?>"></script>
 <script type="text/javascript">
 
     var code;
