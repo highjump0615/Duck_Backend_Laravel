@@ -43,4 +43,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/store/save', 'StoreController@saveStore');
     Route::get('/store/detail/{id}', 'StoreController@showDetail');
     Route::get('/store/remove/{id}', 'StoreController@deleteStore');
+
+    // 统计
+    Route::get('/stat', 'StatController@index');
 });

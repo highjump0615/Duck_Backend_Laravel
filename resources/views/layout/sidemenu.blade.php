@@ -47,7 +47,7 @@
             <dd @if ($menu == "user")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "user.list") class="current" @endif>
-                        <a href="/user" title="管理员列表">管理员列表</a>
+                        <a href="{{url('/user')}}" title="管理员列表">管理员列表</a>
                     </li>
                 </ul>
             </dd>
@@ -59,7 +59,7 @@
             <dd @if ($menu == "stat")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "stat.data") class="current" @endif>
-                        <a href="charts-1.html" title="自定义查询">自定义查询</a>
+                        <a href="{{url('/stat')}}" title="自定义查询">自定义查询</a>
                     </li>
                 </ul>
             </dd>
