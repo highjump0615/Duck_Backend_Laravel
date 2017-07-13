@@ -26,7 +26,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/category_add', 'ProductController@category_add');
     Route::post('/category', 'ProductController@saveCategory');
 
-	// ����
+	// 订单管理
     Route::get('/', 'OrderController@getOrderList');
     Route::get('/order/detail/{id}', 'OrderController@showOrder');
+
+    // 宣传管理
+    Route::get('/ads', 'AdsController@showAds');
+    Route::get('/ads/add', 'AdsController@showAdd');
+    Route::get('/ads/detail/{id}', 'AdsController@showDetail');
+    Route::post('/ads/save', 'AdsController@saveAds');
+    Route::get('/ads/remove/{id}', 'AdsController@deleteUser');
 });

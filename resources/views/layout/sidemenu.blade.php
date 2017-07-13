@@ -8,7 +8,7 @@
             <dd @if ($menu == "order") style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "order.list") class="current" @endif>
-                        <a href="/" title="订单列表">订单列表</a>
+                        <a href="{{url('/')}}" title="订单列表">订单列表</a>
                     </li>
                 </ul>
             </dd>
@@ -20,14 +20,14 @@
             <dd @if ($menu == "ads") style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "ads.list") class="current" @endif>
-                        <a href="picture-list.html" title="宣传列表">宣传列表</a>
+                        <a href="{{url('/ads')}}" title="宣传列表">宣传列表</a>
                     </li>
                 </ul>
             </dd>
         </dl>
         <dl id="menu-product">
             <dt @if ($menu == "product") class="selected" @endif>
-                <i class="Hui-iconfont">&#xe620;</i> 产品管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
+                <i class="Hui-iconfont">&#xe620;</i> 商品管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
             </dt>
             <dd @if ($menu == "product")  style="display: block;" @endif>
                 <ul>
@@ -35,7 +35,7 @@
                         <a href="{{url('/category')}}" title="分类管理">分类管理</a>
                     </li>
                     <li @if ($page == "product.list") class="current" @endif>
-                        <a href="product-list.php" title="产品列表">产品列表</a>
+                        <a href="product-list.php" title="产品列表">商品列表</a>
                     </li>
                 </ul>
             </dd>

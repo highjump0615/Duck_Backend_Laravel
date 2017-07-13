@@ -59,7 +59,7 @@
                                     </a>
                                     <!-- 不能删除admin账号 -->
                                     @if ($user->id > 1)
-                                    <a title="删除" href="javascript:;" onclick="admin_del(this,'1')" class="ml-5" style="text-decoration:none">
+                                    <a title="删除" href="javascript:;" onclick="admin_del(this)" class="ml-5" style="text-decoration:none">
                                         <i class="Hui-iconfont">&#xe6e2;</i>
                                     </a>
                                     @endif
@@ -75,8 +75,8 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+    <script type="text/javascript" src="<?=asset('lib/datatables/1.10.0/jquery.dataTables.min.js') ?>"></script>
+    <script type="text/javascript" src="<?=asset('lib/laypage/1.2/laypage.js') ?>"></script>
     <script type="text/javascript">
         /*
          参数解释：
@@ -91,7 +91,7 @@
             layer_show(title,url,w,h);
         }
         /*管理员-删除*/
-        function admin_del(obj,id){
+        function admin_del(obj){
             layer.confirm('确认要删除吗？',function(index){
                 //此处请求后台程序，下方是成功后的前台处理……
 
