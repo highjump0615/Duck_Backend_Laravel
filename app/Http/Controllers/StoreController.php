@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class AdsController extends Controller
+class StoreController extends Controller
 {
-    public $menu = 'ads';
+    public $menu = 'store';
     public $viewBaseParams;
 
     public function __construct()
@@ -15,34 +15,32 @@ class AdsController extends Controller
     }
 
     /**
-     * 打开宣传列表页面
+     * 打开门店列表页面
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showAds() {
-        return view('ads.list', array_merge($this->viewBaseParams, [
+    public function showStores(Request $request) {
+        return view('store.list', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
         ]));
     }
 
     /**
      * 打开添加页面
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showAdd() {
-        return view('ads.detail', array_merge($this->viewBaseParams, [
-            'page' => $this->menu . '.list',
-        ]));
+    public function showAdd(Request $request) {
+        return view('store.detail');
     }
 
     /**
-     * 打开详情页面
+     * 打开修改页面
      * @param Request $request
      * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showDetail(Request $request, $id) {
-        return view('ads.detail', array_merge($this->viewBaseParams, [
-            'page' => $this->menu . '.list',
-        ]));
+        return view('store.detail');
     }
 }
