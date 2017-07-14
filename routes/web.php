@@ -60,4 +60,5 @@ Route::group(['middleware' => ['auth']], function() {
 
     // 系统设置
     Route::get('/setting', 'SystemController@index');
+    Route::post('/setting', 'SystemController@saveSetting');
 });
