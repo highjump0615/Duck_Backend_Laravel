@@ -62,3 +62,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/setting', 'SystemController@index');
     Route::post('/setting', 'SystemController@saveSetting');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
