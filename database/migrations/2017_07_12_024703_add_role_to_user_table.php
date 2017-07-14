@@ -14,14 +14,14 @@ class AddRoleToUserTable extends Migration
     public function up()
     {
         Schema::table(CreateUsersTable::$tableName, function (Blueprint $table) {
-            $table->unsignedInteger('role_id')->comment('角色');
+        $table->unsignedInteger('role_id')->comment('角色');
 
-            // 外键
-            $table->foreign('role_id')->references('id')
-                ->on(CreateRoleTable::$tableName)
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-        });
+        // 外键
+        $table->foreign('role_id')->references('id')
+            ->on(CreateRoleTable::$tableName)
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
+    });
     }
 
     /**
@@ -32,7 +32,8 @@ class AddRoleToUserTable extends Migration
     public function down()
     {
         Schema::table(CreateUsersTable::$tableName, function (Blueprint $table) {
-            $this->dropColumn('role_id');
+            $table->dropForeign(CreateOrderTable::$tableName.'_role_id_foreign');
+            $table->dropColumn('role_id');
         });
     }
 }

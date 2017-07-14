@@ -41,6 +41,9 @@ class StoreController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showDetail(Request $request, $id) {
-        return view('store.detail');
+
+        return view('store.detail', [
+
+        ]);
     }
 }

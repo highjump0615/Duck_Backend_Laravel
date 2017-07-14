@@ -25,7 +25,7 @@
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">订单号：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" value="23423" class="input-text" readonly>
+                                    <input type="text" value="{{$order->id}}" class="input-text" readonly>
                                 </div>
                             </div>
                             <div class="row cl">
@@ -34,19 +34,19 @@
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">名称</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->product_name}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">分类</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->product_category_name}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">数量</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->count}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -57,13 +57,13 @@
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">姓名</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->name}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">手机号</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->phone}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -74,13 +74,13 @@
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">渠道</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->deliver_mode_str}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-8">
                                         <label class="form-label pull-left col-sm-2">地址</label>
                                         <div class="col-sm-10 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->address}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -91,13 +91,13 @@
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">人数</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="asdf" class="input-text" readonly>
+                                            <input type="text" value="{{$order->gb_count}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">倒计时</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="12:32" class="input-text" readonly>
+                                            <input type="text" value="{{$order->gb_timeout}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -105,19 +105,19 @@
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">支付金额：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" value="234.5" class="input-text" readonly>
+                                    <input type="text" value="{{$order->price}}" class="input-text" readonly>
                                 </div>
                             </div>
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">订单状态：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" value="待发货" class="input-text" readonly>
+                                    <input type="text" value="{{$order->status_str}}" class="input-text" readonly>
                                 </div>
                             </div>
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">发货快递单号：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" value="" class="input-text">
+                                    <input type="text" value="{{$order->deliver_code}}" class="input-text">
                                 </div>
                             </div>
                         </form>
