@@ -18,7 +18,7 @@
             <article class="cl pd-20">
                 <div class="cl pd-5 bg-1 bk-gray">
 				<span class="l">
-					<a href="javascript:;" onclick="admin_add('添加门店','/store/add','800','400')" class="btn btn-primary radius">
+					<a href="javascript:;" onclick="admin_add('添加门店','{{url('/store/add')}}','800','400')" class="btn btn-primary radius">
                         <i class="Hui-iconfont">&#xe600;</i> 添加门店
                     </a>
 				</span>
@@ -36,25 +36,27 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php $i = 0; ?>
+                            <?php $i = 1; ?>
+                            @foreach($stores as $s)
                             <tr class="text-c">
-                                <td>1</td>
-                                <td>阿斯蒂芬离开</td>
-                                <td>的脸孔王培荣 数量的看法</td>
-                                <td>2340239384</td>
+                                <td>{{$i++}}</td>
+                                <td>{{$s->name}}</td>
+                                <td>{{$s->address}}</td>
+                                <td>{{$s->phone}}</td>
                                 <td class="td-manage">
                                     <a title="编辑"
                                        href="javascript:;"
-                                       onclick="admin_edit('门店编辑','/store/detail/3','1','800','400')"
+                                       onclick="admin_edit('门店编辑','{{url('/store/detail')}}/{{$s->id}}','1','800','400')"
                                        class="ml-5"
                                        style="text-decoration:none">
                                         <i class="Hui-iconfont">&#xe6df;</i>
                                     </a>
-                                    <a title="删除" href="javascript:;" onclick="admin_del(this)" class="ml-5" style="text-decoration:none">
+                                    <a title="删除" href="javascript:;" onclick="admin_del(this, '{{$s->id}}')" class="ml-5" style="text-decoration:none">
                                         <i class="Hui-iconfont">&#xe6e2;</i>
                                     </a>
                                 </td>
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -80,7 +82,7 @@
             layer_show(title,url,w,h);
         }
         /*管理员-删除*/
-        function admin_del(obj){
+        function admin_del(obj, id){
             layer.confirm('确认要删除吗？',function(index){
                 //此处请求后台程序，下方是成功后的前台处理……
 
@@ -89,9 +91,12 @@
 
                 // 删除
                 $.ajax({
-                    type: 'GET',
-                    url: '/user/remove/' + nId,
-                    data: {},
+                    type: 'DELETE',
+                    url: '{{url('/store')}}' ,
+                    data: {
+                        'store_id': id,
+                        "_token": "{{ csrf_token() }}",
+                    },
                     success: function (data) {
                         trObj.remove();
                         layer.msg('已删除!',{icon:1,time:1000});

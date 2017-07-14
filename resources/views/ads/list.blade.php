@@ -36,21 +36,23 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @foreach($ads as $a)
                             <tr class="text-c va-m">
-                                <td>001</td>
-                                <td><img width="60" class="product-thumb" src="temp/product/Thumb/6204.jpg"></td>
-                                <td class="text-l">123</td>
-                                <td class="text-l">2017-04-30 10:30:00</td>
-                                <td class="text-l">2017-06-30 11:30:00</td>
+                                <td>{{$a->id}}</td>
+                                <td><img width="60" class="product-thumb" src="{{$a->image_full_path}}"></td>
+                                <td class="text-l">{{$a->product->name}}</td>
+                                <td class="text-l">{{$a->start_at}}</td>
+                                <td class="text-l">{{$a->end_at}}</td>
                                 <td class="td-manage">
-                                    <a style="text-decoration:none" class="ml-5" href="{{url('/ads/detail/23')}}" title="编辑">
+                                    <a style="text-decoration:none" class="ml-5" href="{{url('/ads/detail/')}}/{{$a->id}}" title="编辑">
                                         <i class="Hui-iconfont">&#xe6df;</i>
                                     </a>
-                                    <a style="text-decoration:none" class="ml-5" onClick="product_del(this)" href="javascript:;" title="删除">
+                                    <a style="text-decoration:none" class="ml-5" onClick="product_del(this, '{{$a->id}}')" href="javascript:;" title="删除">
                                         <i class="Hui-iconfont">&#xe6e2;</i>
                                     </a>
                                 </td>
                             </tr>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -64,17 +66,30 @@
 
 @section('script')
 
-    <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+    <script type="text/javascript" src="<?=asset('lib/laypage/1.2/laypage.js')?>"></script>
     <script type="text/javascript">
 
         $(document).ready(function(){
         });
 
         /*图片-删除*/
-        function product_del(obj){
+        function product_del(obj, id){
             layer.confirm('确认要删除吗？',function(index){
-                $(obj).parents("tr").remove();
-                layer.msg('已删除!',{icon:1,time:1000});
+                $.ajax({
+                    type: 'DELETE',
+                    url: '{{url('/ad')}}',
+                    data: {
+                        'ad_id': id,
+                        "_token": "{{ csrf_token() }}",
+                    },
+                    success: function (data) {
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                });
             });
         }
     </script>

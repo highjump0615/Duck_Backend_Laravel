@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Store;
 class StoreController extends Controller
 {
     public $menu = 'store';
@@ -20,8 +20,10 @@ class StoreController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showStores(Request $request) {
+        $stores = Store::all();
         return view('store.list', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
+            'stores' => $stores,
         ]));
     }
 
@@ -41,9 +43,33 @@ class StoreController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showDetail(Request $request, $id) {
-
+        $s = Store::find($id);
         return view('store.detail', [
-
+            'store' => $s,
         ]);
+    }
+
+    public function deleteStore(Request $request) {
+        $store_id = $request->input('store_id');
+        $store = Store::find($store_id);
+
+        $store->delete();
+    }
+
+    public function saveStore(Request $request) {
+        if($request->has('store_id')) {
+            $store_id = $request->input('store_id');
+            $store = Store::find($store_id);
+        } else {
+            $store = new Store;
+        }
+
+        $store->name = $request->input('name');
+        $store->address = $request->input('address');
+        $store->phone = $request->input('phone');
+        $store->longitude = $request->input('longitude');
+        $store->latitude = $request->input('latitude');
+
+        $store->save();
     }
 }

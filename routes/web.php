@@ -45,14 +45,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/ads', 'AdsController@showAds');
     Route::get('/ads/add', 'AdsController@showAdd');
     Route::get('/ads/detail/{id}', 'AdsController@showDetail');
-    Route::post('/ads/save', 'AdsController@saveAds');
-    Route::get('/ads/remove/{id}', 'AdsController@deleteAds');
+    Route::post('/ad', 'AdsController@saveAd');
+    Route::delete('/ad', 'AdsController@deleteAd');
 
     // 门店管理
     Route::get('/store', 'StoreController@showStores');
     Route::get('/store/add', 'StoreController@showAdd');
-    Route::post('/store/save', 'StoreController@saveStore');
+    Route::post('/store', 'StoreController@saveStore');
     Route::get('/store/detail/{id}', 'StoreController@showDetail');
-    Route::get('/store/remove/{id}', 'StoreController@deleteStore');
+    Route::delete('/store', 'StoreController@deleteStore');
 
 });

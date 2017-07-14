@@ -3,9 +3,9 @@
 @section('content')
 
     <article class="cl pd-20">
-        <form action="/store/save" method="post" class="form form-horizontal" id="form-store-add">
-            @if (!empty($user))
-                <input type="hidden" name="userid" value="{{$user->id}}">
+        <form action="{{url('/store')}}" method="post" class="form form-horizontal" id="form-store-add">
+            @if (isset($store))
+                <input type="hidden" name="store_id" value="{{$store->id}}">
             @endif
             {{ csrf_field() }}
             <div class="row cl">
@@ -13,7 +13,7 @@
                 <div class="formControls col-xs-8 col-sm-9">
                     <input type="text"
                            class="input-text"
-                           @if (!empty($user)) value="{{$user->username}}" @endif
+                           @if (!empty($store)) value="{{$store->name}}" @endif
                            name="name">
                 </div>
             </div>
@@ -22,7 +22,7 @@
                 <div class="formControls col-xs-8 col-sm-9">
                     <input type="text"
                            class="input-text"
-                           @if (!empty($user)) value="{{$user->username}}" @endif
+                           @if (!empty($store)) value="{{$store->address}}" @endif
                            name="address">
                 </div>
             </div>
@@ -30,10 +30,10 @@
                 <label class="form-label col-xs-4 col-sm-3">位置：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     <div class="col-sm-6">
-                        <input type="text" placeholder="经度" value="" class="input-text">
+                        <input type="text" name="longitude" @if(!empty($store)) value="{{$store->longitude}}" @endif placeholder="经度" value="" class="input-text" onkeypress='validate(event)'>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" placeholder="维度" value="" class="input-text">
+                        <input type="text" name="latitude" @if(!empty($store)) value="{{$store->latitude}}" @endif placeholder="维度" value="" class="input-text" onkeypress='validate(event)'>
                     </div>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                 <div class="formControls col-xs-8 col-sm-9">
                     <input type="text"
                            class="input-text"
-                           @if (!empty($user)) value="{{$user->username}}" @endif
+                           @if (!empty($store)) value="{{$store->phone}}" @endif
                            name="phone">
                 </div>
             </div>
@@ -61,7 +61,20 @@
     <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/jquery.validate.js') ?>"></script>
     <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/validate-methods.js') ?>"></script>
     <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/messages_zh.js') ?>"></script>
+
+
     <script type="text/javascript">
+        function validate(evt) {
+            var theEvent = evt || window.event;
+            var key = theEvent.keyCode || theEvent.which;
+            key = String.fromCharCode( key );
+            var regex = /[0-9]|\./;
+            if( !regex.test(key) ) {
+                theEvent.returnValue = false;
+                if(theEvent.preventDefault) theEvent.preventDefault();
+            }
+        }
+
         function enableSubmit(enable) {
             var objSubmit = $('input[type = submit]');
             if (enable) {
@@ -89,7 +102,7 @@
                 // 提交
                 $.ajax({
                     type: 'POST',
-                    url: '/user/save',
+                    url: '/store',
                     data: $(this).serializeArray(),
                     success: function (data) {
                         parent.location.reload();

@@ -220,7 +220,7 @@
                     // 提交
                     $.ajax({
                         type: 'DELETE',
-                        url: '{{'/product'}}',
+                        url: '{{url('/product')}}',
                         data: {
                             'product_id': id,
                             "_token": "{{ csrf_token() }}",
