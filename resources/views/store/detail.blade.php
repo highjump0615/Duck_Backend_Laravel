@@ -3,7 +3,7 @@
 @section('content')
 
     <article class="cl pd-20">
-        <form action="/store/save" method="post" class="form form-horizontal" id="form-store-add">
+        <form action="{{url('/store/save')}}" method="post" class="form form-horizontal" id="form-store-add">
             @if (!empty($user))
                 <input type="hidden" name="userid" value="{{$user->id}}">
             @endif

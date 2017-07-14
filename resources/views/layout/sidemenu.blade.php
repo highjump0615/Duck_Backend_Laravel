@@ -68,7 +68,7 @@
             <dt @if ($menu == "store") class="selected" @endif>
                 <i class="Hui-iconfont">&#xe66a;</i> 门店管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
             </dt>
-            <dd @if ($menu == "system")  style="display: block;" @endif>
+            <dd @if ($menu == "store")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "store.list") class="current" @endif>
                         <a href="{{url('/store')}}" title="门店列表">门店列表</a>
@@ -83,7 +83,7 @@
             <dd @if ($menu == "system")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "system.setting") class="current" @endif>
-                        <a href="system-base.html" title="系统设置">系统设置</a>
+                        <a href="{{url('/setting')}}" title="系统设置">系统设置</a>
                     </li>
                 </ul>
             </dd>

@@ -28,9 +28,10 @@ class CreateOrderTable extends Migration
             $table->tinyInteger('pay_status')->comment('支付状态');
             $table->tinyInteger('status')->comment('状态');
             $table->unsignedInteger('groupbuy_id')->comment('拼团');
-            $table->tinyInteger('deliver_code')->nullable()->comment('快递单号');
+            $table->string('deliver_code')->nullable()->comment('快递单号');
 
             $table->timestamps();
+            $table->softDeletes();
 
             //
             // 外键

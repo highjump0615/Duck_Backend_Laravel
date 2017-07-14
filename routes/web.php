@@ -56,4 +56,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     // 统计
     Route::get('/stat', 'StatController@index');
+
+    // 系统设置
+    Route::get('/setting', 'SystemController@index');
 });
