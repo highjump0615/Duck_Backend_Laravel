@@ -47,6 +47,7 @@
                 data: $(this).serializeArray(),
                 success: function (data) {
                     parent.location.reload();
+//                    console.log(data);
                 },
                 error: function (data) {
                     enableSubmit(true);

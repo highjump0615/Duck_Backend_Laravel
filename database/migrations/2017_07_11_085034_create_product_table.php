@@ -20,7 +20,7 @@ class CreateProductTable extends Migration
             $table->string('name')->comment('名称');
             $table->unsignedInteger('category_id')->comment('分类');
             $table->text('rtf_content')->nullable()->comment('详细介绍');
-            $table->string('thumbnail')->comment('缩略图');
+            $table->string('thumbnail')->comment('缩略图')->nullable();
             $table->double('price')->comment('原价');
             $table->double('deliver_cost')->comment('运费');
 

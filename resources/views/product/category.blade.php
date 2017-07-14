@@ -79,8 +79,8 @@
         $(document).ready(function(){
             var t = $("#treeDemo");
             t = $.fn.zTree.init(t, setting, zNodes);
-            demoIframe = $("#testIframe");
-            demoIframe.bind("load", loadReady);
+            //demoIframe = $("#testIframe");
+            //demoIframe.bind("load", loadReady);
             var zTree = $.fn.zTree.getZTreeObj("tree");
             //zTree.selectNode(zTree.getNodeByParam("id",'1'));
         });
