@@ -43,4 +43,17 @@ class OrderController extends Controller
             'order'=>$order
         ]));
     }
+    
+    public function updateOrder(Request $request, $id) {
+        $order = Order::find($id);
+        
+        if($request->has('deliver_code')) {
+            $order->deliver_code = $request->input('deliver_code');
+            $order->status = Order::STATUS_SENT;
+        }
+        
+        $order->save();
+
+        return redirect()->to(url('/order')."/detail/".$id);
+    }
 }

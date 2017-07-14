@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth']], function() {
 	// 订单管理
     Route::get('/', 'OrderController@getOrderList');
     Route::get('/order/detail/{id}', 'OrderController@showOrder');
+    Route::post('/order/{id}', 'OrderController@updateOrder');
 
     // 宣传管理
     Route::get('/ads', 'AdsController@showAds');

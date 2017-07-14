@@ -8,7 +8,7 @@ class Order extends Model
 {
     protected $fillable = [
         'customer_id', 'product_id', 'count', 'name', 'phone', 'channel', 'store_id', 'desc', 'address', 'pay_status',
-        'groupby_id', 'deliver_code', 'spec_id',
+        'groupbuy_id', 'deliver_code', 'spec_id',
     ];
 
     public $timestamps = true;
@@ -16,7 +16,7 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $appends = [
-        'customer_name', 'product_name', 'spec_name', 'deliver_mode_str', 'status_str', 'product_category_name',
+        'customer_name', 'product_name', 'spec_name', 'deliver_mode_str', 'status_str', 'product_category_name', 'group',
     ];
 
     const STATUS_GROUPBUY_WAITING = 1;
@@ -72,5 +72,12 @@ class Order extends Model
 
     public function histories() {
         return $this->hasMany('App\OrderHistory');
+    }
+
+    public function getGroupAttribute() {
+        $gid = $this->groupbuy_id;
+        $g = Groupbuy::find($gid);
+
+        return $g;
     }
 }
