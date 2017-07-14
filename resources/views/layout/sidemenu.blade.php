@@ -35,7 +35,7 @@
                         <a href="{{url('/category')}}" title="分类管理">分类管理</a>
                     </li>
                     <li @if ($page == "product.list") class="current" @endif>
-                        <a href="{{'/products'}}" title="产品列表">产品列表</a>
+                        <a href="{{url('/products')}}" title="产品列表">产品列表</a>
                     </li>
                 </ul>
             </dd>
@@ -47,7 +47,7 @@
             <dd @if ($menu == "user")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "user.list") class="current" @endif>
-                        <a href="/user" title="管理员列表">管理员列表</a>
+                        <a href="{{url('/user')}}" title="管理员列表">管理员列表</a>
                     </li>
                 </ul>
             </dd>
@@ -59,7 +59,7 @@
             <dd @if ($menu == "stat")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "stat.data") class="current" @endif>
-                        <a href="charts-1.html" title="自定义查询">自定义查询</a>
+                        <a href="{{url('/stat')}}" title="自定义查询">自定义查询</a>
                     </li>
                 </ul>
             </dd>
@@ -68,7 +68,7 @@
             <dt @if ($menu == "store") class="selected" @endif>
                 <i class="Hui-iconfont">&#xe66a;</i> 门店管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
             </dt>
-            <dd @if ($menu == "system")  style="display: block;" @endif>
+            <dd @if ($menu == "store")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "store.list") class="current" @endif>
                         <a href="{{url('/store')}}" title="门店列表">门店列表</a>
@@ -83,7 +83,7 @@
             <dd @if ($menu == "system")  style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "system.setting") class="current" @endif>
-                        <a href="system-base.html" title="系统设置">系统设置</a>
+                        <a href="{{url('/setting')}}" title="系统设置">系统设置</a>
                     </li>
                 </ul>
             </dd>

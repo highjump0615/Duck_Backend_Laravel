@@ -55,4 +55,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/store/detail/{id}', 'StoreController@showDetail');
     Route::delete('/store', 'StoreController@deleteStore');
 
+    // 统计
+    Route::get('/stat', 'StatController@index');
+
+    // 系统设置
+    Route::get('/setting', 'SystemController@index');
 });

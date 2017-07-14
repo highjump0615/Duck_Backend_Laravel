@@ -3,7 +3,7 @@
 @section('content')
 
     <article class="cl pd-20">
-        <form action="/user/save" method="post" class="form form-horizontal" id="form-admin-add">
+        <form action="{{url('/user/save')}}" method="post" class="form form-horizontal" id="form-admin-add">
             @if (!empty($user))
             <input type="hidden" name="userid" value="{{$user->id}}">
             @endif
@@ -78,9 +78,6 @@
 
 @section('script')
 
-    <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/jquery.validate.js') ?>"></script>
-    <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/validate-methods.js') ?>"></script>
-    <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/messages_zh.js') ?>"></script>
     <script type="text/javascript">
         function enableSubmit(enable) {
             var objSubmit = $('input[type = submit]');

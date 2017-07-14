@@ -14,7 +14,9 @@
     <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/skin/default/skin.css') ?>" id="skin" />
     <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/css/style.css') ?>" />
     <link rel="stylesheet" href="<?=asset('lib/zTree/v3/css/zTreeStyle/zTreeStyle.css')?>" type="text/css">
+
     @yield('style')
+
     <title>皇老鸭</title>
 </head>
 <body>
