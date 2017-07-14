@@ -16,7 +16,7 @@
                 <table class="table">
                     <tr>
                         <td width="200" class="va-t"><ul id="treeDemo" class="ztree"></ul></td>
-                        <td class="va-t"><iframe ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING=AUTO width=100%  height=390px SRC="{{'/category_add'}}"></iframe></td>
+                        <td class="va-t"><iframe ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING=AUTO width=100%  height=390px SRC="{{url('/category_add')}}"></iframe></td>
                     </tr>
                 </table>
             </article>
