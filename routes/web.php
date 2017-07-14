@@ -26,6 +26,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/category_add', 'ProductController@category_add');
     Route::post('/category', 'ProductController@saveCategory');
 
+
+    Route::get('/products', 'ProductController@showProductList');
+    Route::get('/product/new', 'ProductController@showProduct');
+    Route::get('/product/{id}/edit', 'ProductController@showProduct');
+    Route::post('/product', 'ProductController@saveProduct');
+    Route::delete('/product', 'ProductController@deleteProduct');
+
+    Route::post('/rule', 'ProductController@addRule');
+    
+
 	// 订单管理
     Route::get('/', 'OrderController@getOrderList');
     Route::get('/order/detail/{id}', 'OrderController@showOrder');
