@@ -35,25 +35,27 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @foreach($orders as $o)
                             <tr class="text-c va-m">
-                                <td>001</td>
-                                <td></td>
-                                <td class="text-l"></td>
-                                <td class="text-l"></td>
-                                <td class="text-l"></td>
-                                <td class="text-l"></td>
-                                <td class="text-l"></td>
-                                <td><span class="price">356.0</span> 元</td>
-                                <td class="td-status"></td>
+                                <td>{{$o->id}}</td>
+                                <td>{{$o->product_name}}</td>
+                                <td class="text-l">{{$o->count}}</td>
+                                <td class="text-l">{{$o->spec_name}}</td>
+                                <td class="text-l">{{$o->name}}</td>
+                                <td class="text-l">{{$o->phone}}</td>
+                                <td class="text-l">{{$o->deliver_mode_str}}</td>
+                                <td><span class="price">{{$o->price}}</span> 元</td>
+                                <td class="td-status">{{$o->status_str}}</td>
                                 <td class="td-manage">
                                     <a style="text-decoration:none"
                                        class="ml-5"
-                                       href="{{url('/order/detail/12')}}"
+                                       href="{{url('/order/detail')}}/{{$o->id}}"
                                        title="编辑">
                                         <i class="Hui-iconfont">&#xe6df;</i>
                                     </a>
                                 </td>
                             </tr>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
