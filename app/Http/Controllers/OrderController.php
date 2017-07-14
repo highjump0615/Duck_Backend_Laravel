@@ -25,4 +25,16 @@ class OrderController extends Controller
             'page' => $this->menu . '.list',
         ]));
     }
+
+    /**
+     * 打开订单详情页面
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showOrder(Request $request, $id) {
+        return view('order.detail', array_merge($this->viewBaseParams, [
+            'page' => $this->menu . '.list',
+        ]));
+    }
 }

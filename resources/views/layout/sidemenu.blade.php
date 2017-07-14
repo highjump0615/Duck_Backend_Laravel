@@ -8,7 +8,7 @@
             <dd @if ($menu == "order") style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "order.list") class="current" @endif>
-                        <a href="/" title="订单列表">订单列表</a>
+                        <a href="{{url('/')}}" title="订单列表">订单列表</a>
                     </li>
                 </ul>
             </dd>
@@ -20,14 +20,14 @@
             <dd @if ($menu == "ads") style="display: block;" @endif>
                 <ul>
                     <li @if ($page == "ads.list") class="current" @endif>
-                        <a href="picture-list.html" title="宣传列表">宣传列表</a>
+                        <a href="{{url('/ads')}}" title="宣传列表">宣传列表</a>
                     </li>
                 </ul>
             </dd>
         </dl>
         <dl id="menu-product">
             <dt @if ($menu == "product") class="selected" @endif>
-                <i class="Hui-iconfont">&#xe620;</i> 产品管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
+                <i class="Hui-iconfont">&#xe620;</i> 商品管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
             </dt>
             <dd @if ($menu == "product")  style="display: block;" @endif>
                 <ul>
@@ -46,9 +46,6 @@
             </dt>
             <dd @if ($menu == "user")  style="display: block;" @endif>
                 <ul>
-                    {{--<li @if ($page == "admin.role") class="current" @endif>--}}
-                    {{--<a href="admin-role.php" title="角色管理">角色管理</a>--}}
-                    {{--</li>--}}
                     <li @if ($page == "user.list") class="current" @endif>
                         <a href="/user" title="管理员列表">管理员列表</a>
                     </li>
@@ -63,6 +60,18 @@
                 <ul>
                     <li @if ($page == "stat.data") class="current" @endif>
                         <a href="charts-1.html" title="自定义查询">自定义查询</a>
+                    </li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-store">
+            <dt @if ($menu == "store") class="selected" @endif>
+                <i class="Hui-iconfont">&#xe66a;</i> 门店管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
+            </dt>
+            <dd @if ($menu == "system")  style="display: block;" @endif>
+                <ul>
+                    <li @if ($page == "store.list") class="current" @endif>
+                        <a href="{{url('/store')}}" title="门店列表">门店列表</a>
                     </li>
                 </ul>
             </dd>
