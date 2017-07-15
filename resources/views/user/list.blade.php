@@ -52,7 +52,7 @@
                                 <td class="td-manage">
                                     <a title="编辑"
                                        href="javascript:;"
-                                       onclick="admin_edit('管理员编辑', '{{url("/user/detail/")}}' + '{{$user->id}}','1','800','400')"
+                                       onclick="admin_edit('管理员编辑', '{{url("/user/detail")}}/{{$user->id}}','1','800','400')"
                                        class="ml-5"
                                        style="text-decoration:none">
                                         <i class="Hui-iconfont">&#xe6df;</i>
