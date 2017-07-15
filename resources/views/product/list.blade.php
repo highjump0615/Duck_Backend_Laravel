@@ -32,14 +32,14 @@
                         <table class="table table-border table-bordered table-bg table-hover table-sort">
                             <thead>
                                 <tr class="text-c">
-                                    <th width="40" rowspan="2">ID</th>
-                                    <th width="60" rowspan="2">名称</th>
-                                    <th width="100" rowspan="2">分类</th>
+                                    <th width="20" rowspan="2">ID</th>
+                                    <th rowspan="2">名称</th>
+                                    <th rowspan="2">分类</th>
                                     <th rowspan="2">原价</th>
-                                    <th width="100" rowspan="2">运费</th>
+                                    <th rowspan="2">运费</th>
                                     <th colspan="3">拼团信息</th>
                                     <th rowspan="2">库存</th>
-                                    <th width="100" rowspan="2">操作</th>
+                                    <th width="50" rowspan="2">操作</th>
                                 </tr>
                                 <tr class="text-c">
                                     <th>人数底线</th>

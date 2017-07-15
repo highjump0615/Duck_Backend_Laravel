@@ -18,7 +18,7 @@
             <article class="cl pd-20">
                 <div class="cl pd-5 bg-1 bk-gray">
 				<span class="l">
-					<a href="javascript:;" onclick="admin_add('添加管理员','/user/add','800','400')" class="btn btn-primary radius">
+					<a href="javascript:;" onclick="admin_add('添加管理员', '{{url("/user/add")}}','800','400')" class="btn btn-primary radius">
                         <i class="Hui-iconfont">&#xe600;</i> 添加管理员
                     </a>
 				</span>
@@ -52,7 +52,7 @@
                                 <td class="td-manage">
                                     <a title="编辑"
                                        href="javascript:;"
-                                       onclick="admin_edit('管理员编辑','/user/detail/{{$user->id}}','1','800','400')"
+                                       onclick="admin_edit('管理员编辑', '{{url("/user/detail/")}}' + '{{$user->id}}','1','800','400')"
                                        class="ml-5"
                                        style="text-decoration:none">
                                         <i class="Hui-iconfont">&#xe6df;</i>
