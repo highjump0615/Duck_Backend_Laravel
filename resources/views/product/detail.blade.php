@@ -826,7 +826,10 @@
                         case 'finish':
                             stats = uploader.getStats();
                             if (stats.successNum) {
+                                // 恢复提交按钮
                                 alert('提交成功！');
+
+                                location.href = '{{url("/products")}}';
                             }
                             else {
                                 // 没有成功的图片，重设
@@ -931,7 +934,7 @@
                     enableSubmit('btn-rule-add', true);
 
                     // 添加到主页面
-                    $('.prod-spec').append('<input type="checkbox" value="1" name="' + data.rule + '" checked /> ' + rule);
+                    $('.prod-spec').append('<label><input type="checkbox" value="1" name="spec' + data.rule + '" checked /> ' + rule + '</label>');
 
                     // 清空规则输入
                     $('#rule-name').val('');
