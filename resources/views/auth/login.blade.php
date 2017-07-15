@@ -23,7 +23,7 @@
                 <input type="text" placeholder="用户名" name="username">
                 <input type="password" placeholder="密码" name="password">
                 <button type="submit">登录</button>
-                <p class="message">忘了密码？ <a href="{{url('/login/forgot')}}">找回密码</a></p>
+                <p class="message">忘了密码？ <a href="{{url('/password/reset')}}">找回密码</a></p>
             </form>
         </div>
     </div>

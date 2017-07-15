@@ -2,6 +2,7 @@
 
 namespace App\Model;
 
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,6 +13,7 @@ class User extends Authenticatable
 
     use softDeletes;
     use Notifiable;
+    use CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
