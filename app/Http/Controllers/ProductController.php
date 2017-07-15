@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Groupbuy;
 use App\Model\ProductImages;
+use App\Order;
 use App\Product;
 use App\ProductSpec;
 use App\Spec;
@@ -238,6 +240,113 @@ class ProductController extends Controller
             'jsonrpc' => '2.0',
             'result' => null,
             'id' => 'id',
+        ]);
+    }
+
+    /**
+     * 获取商品分类API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCategoriesApi(Request $request) {
+        $categories = Category::get(['id', 'name']);
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $categories,
+        ]);
+    }
+
+    /**
+     * 获取一种商品API
+     * @param $categoryId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getProductsApi($categoryId) {
+        $products = Product::where('category_id', $categoryId)
+            ->get();
+
+        $result = [];
+        foreach ($products as $product) {
+            $result[] = [
+                'id'        => $product->id,
+                'name'      => $product->name,
+                'thumbnail' => $product->getThumbnailUrl(),
+                'price'     => $product->price,
+                'gb_price'  => $product->gb_price,
+            ];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $result,
+        ]);
+    }
+
+    /**
+     * 获取商品详细内容
+     * @param $productId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getProductDetailApi($productId) {
+        $product = Product::with('images')
+            ->with('specs')
+            ->find($productId);
+
+        // 获取拼团
+        $groubBuys = Groupbuy::whereHas('orders', function($query) use ($productId) {
+            $query->where('product_id', $productId);
+        })->get();
+
+        $result = [
+            'name'              => $product->name,
+            'thumbnail'         => $product->getThumbnailUrl(),
+            'price'             => $product->price,
+            'price_deliver'     => $product->deliver_cost,
+            'remain'            => $product->remain,
+            'gb_count'          => $product->gb_count,
+            'gb_price'          => $product->gb_price,
+            'gb_timeout'        => $product->gb_timeout,
+            'rtf_content'       => $product->rtf_content,
+        ];
+
+        // 规格
+        $result['specs'] = [];
+        foreach ($product->specs as $spec) {
+            $result['specs'][] = [
+                'id'        => $spec->id,
+                'name'      => $spec->name,
+            ];
+        }
+
+        // 图片
+        $result['images'] = [];
+        foreach ($product->images as $img) {
+            $result['images'][] = $img->getImageUrl();
+        }
+
+        // 拼团
+        $result['groupbuys'] = [];
+        foreach ($groubBuys as $gb) {
+            $gbInfo = [
+                'id' => $gb->id,
+                'persons' => $gb->persons,
+                'time_remain' => $gb->getRemainTime(),
+            ];
+
+            // 发起人
+            $starter = $gb->orders()->first()->customer;
+            $gbInfo['customer'] = [
+                'name' => $starter->name,
+                'image_url' => $starter->image_url,
+            ];
+
+            $result['groupbuys'][] = $gbInfo;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $result,
         ]);
     }
 }

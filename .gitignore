@@ -5,6 +5,7 @@
 /.idea
 /public/uploads
 /public/ueditor
+/public/attachments
 Homestead.json
 Homestead.yaml
 .env

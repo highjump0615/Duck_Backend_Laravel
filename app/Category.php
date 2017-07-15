@@ -12,13 +12,11 @@ class Category extends Model
 
     public $timestamps = false;
 
-    protected $appends = [
-        'products',
-    ];
-
-    public function getProductsAttribute() {
-        $ps = Product::where('category_id', $this->id)->get();
-
-        return $ps;
+    /**
+     * 获取本分类的所有产品
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function products() {
+        return $this->hasMany('App\Product');
     }
 }

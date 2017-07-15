@@ -97,4 +97,30 @@ class AdsController extends Controller
             abort(404);
         }
     }
+
+    /**
+     * 获取宣传API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAdsApi(Request $request) {
+        $strDateNow = getCurDateString();
+
+        $ads = Ad::whereDate('start_at', '<=', $strDateNow)
+            ->whereDate('end_at', '>=', $strDateNow)
+            ->get();
+
+        $result = [];
+        foreach ($ads as $ad) {
+            $result[] = [
+                'image_url'     => $ad->image_full_path,
+                'product_id'    => $ad->product_id,
+            ];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $result,
+        ]);
+    }
 }

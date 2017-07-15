@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
+    use softDeletes;
+
     protected $fillable = [
         'customer_id', 'product_id', 'count', 'name', 'phone', 'channel', 'store_id', 'desc', 'address', 'pay_status',
         'groupbuy_id', 'deliver_code', 'spec_id',
@@ -16,7 +19,7 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $appends = [
-        'customer_name', 'product_name', 'spec_name', 'deliver_mode_str', 'status_str', 'product_category_name', 'group',
+        'customer_name', 'product_name', 'spec_name', 'deliver_mode_str', 'status_str', 'product_category_name',
     ];
 
     const STATUS_GROUPBUY_WAITING = 1;
@@ -37,7 +40,7 @@ class Order extends Model
 
     public function getProductCategoryNameAttribute() {
         $p = Product::find($this->product_id);
-        return $p->category_name;
+        return $p->category->name;
     }
 
     public function getSpecNameAttribute() {
@@ -74,10 +77,19 @@ class Order extends Model
         return $this->hasMany('App\OrderHistory');
     }
 
-    public function getGroupAttribute() {
-        $gid = $this->groupbuy_id;
-        $g = Groupbuy::find($gid);
+    /**
+     * 获取拼团信息
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function groupBuy() {
+        return $this->belongsTo('App\Groupbuy');
+    }
 
-        return $g;
+    /**
+     * 获取客户
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function customer() {
+        return $this->belongsTo('App\Model\Customer');
     }
 }

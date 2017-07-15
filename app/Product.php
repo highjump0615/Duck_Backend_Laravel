@@ -11,14 +11,17 @@ class Product extends Model
         'remain',
     ];
 
-    protected $appends = ['category_name'];
+    protected $appends = [];
 
     public $timestamps = true;
     public $table = 'product';
 
-    public function getCategoryNameAttribute() {
-        $c = Category::find($this->category_id);
-        return $c->name;
+    /**
+     * 获取分类
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category() {
+        return $this->belongsTo('App\Category');
     }
 
     public function hasSpec($spec_id) {
@@ -45,5 +48,13 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany('App\Model\ProductImages');
+    }
+
+    /**
+     * 获取规格
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function specs() {
+        return $this->belongsToMany('App\Spec', 'product_specs');
     }
 }

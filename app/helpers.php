@@ -13,3 +13,24 @@
 function getProductImagePath() {
     return public_path('uploads/product/');
 }
+
+/**
+ * 获取当前日期
+ * @return string
+ */
+function getCurDateString() {
+    $dateCurrent = new DateTime("now");
+    $strDate = getStringFromDate($dateCurrent);
+
+    return $strDate;
+}
+
+/**
+ * DateTime转string
+ * @param $date DateTime
+ * @return mixed
+ */
+function getStringFromDate($date) {
+    return $date->format('Y-m-d');
+}
+

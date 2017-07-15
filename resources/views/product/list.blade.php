@@ -52,7 +52,7 @@
                                 <tr class="text-c va-m">
                                     <td>{{$p->id}}</td>
                                     <td>{{$p->name}}</td>
-                                    <td>{{$p->category_name}}</td>
+                                    <td>{{$p->category->name}}</td>
                                     <td><span class="price">{{$p->price}}</span></td>
                                     <td><span class="price">{{$p->deliver_cost}}</span></td>
                                     <td>{{$p->gb_count}}</td>

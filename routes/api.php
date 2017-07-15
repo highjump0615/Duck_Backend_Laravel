@@ -16,8 +16,11 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix'=>'/v1'], function() {
 
-    Route::get('/test', function (Request $request) {
-        return "asdf";
-    });
+    Route::post('/customer/set', 'CustomerController@setCustomerApi');
 
+    Route::get('/ads', 'AdsController@getAdsApi');
+
+    Route::get('/product/categories', 'ProductController@getCategoriesApi');
+    Route::get('/products/{id}', 'ProductController@getProductsApi');
+    Route::get('/product/detail/{id}', 'ProductController@getProductDetailApi');
 });
