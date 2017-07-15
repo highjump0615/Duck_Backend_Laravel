@@ -331,7 +331,7 @@
                 // 提交
                 $.ajax({
                     type: 'POST',
-                    url: '{{'/product'}}',
+                    url: '{{url("/product")}}',
                     data: sendData,
                     processData: false,
                     contentType: false,
@@ -922,7 +922,7 @@
             // 提交
             $.ajax({
                 type: 'POST',
-                url: '{{'/rule'}}',
+                url: '{{url("/rule")}}',
                 data: {
                     'name': rule,
                     "_token": "{{ csrf_token() }}"
