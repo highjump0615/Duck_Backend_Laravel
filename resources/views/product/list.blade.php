@@ -14,7 +14,7 @@
             <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
         </nav>
         <div class="Hui-article">
-            <div class="pos-a" style="width:150px;left:0;top:0; bottom:0; height:100%; border-right:1px solid #e5e5e5; background-color:#f5f5f5">
+            <div class="pos-a" style="width:150px; padding-top: 20px; height:100%; border-right:1px solid #e5e5e5; background-color:#f5f5f5">
                 <ul id="treeDemo" class="ztree">
                 </ul>
             </div>

@@ -157,7 +157,7 @@
                     <label class="form-label col-xs-4 col-sm-2">缩略图：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <div class="uploader-thum-container">
-                            <input type="file" id="imgInp" name="thumbimage"/>
+                            <input type="file" id="imgInp"/>
                             <img id="blah"
                                  style="width:80px; height: 80px;"
                                  @if (!empty($product)) src="{{$product->getThumbnailUrl()}}" @endif />
@@ -182,7 +182,6 @@
                                 <div class="info"></div>
                                 <div class="btns">
                                     <div id="filePicker2"></div>
-                                    <div class="uploadBtn">开始上传</div>
                                 </div>
                             </div>
                         </div>
@@ -200,8 +199,9 @@
 
                 <div class="row cl">
                     <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                        <button id="butSubmit" class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i>
-                            保存并提交
+                        <button id="butSubmit" class="btn btn-primary radius" type="submit">
+                            <i class="Hui-iconfont">&#xe632;</i>
+                            <span>保存并提交</span>
                         </button>
                         <button onClick="onCancel();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
                     </div>
@@ -218,6 +218,32 @@
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/ueditor.all.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js')?>"></script>
     <script>
+
+        // WebUploader实例
+        var uploader;
+
+        var getFileBlob = function (url, cb) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url);
+            xhr.responseType = "blob";
+            xhr.addEventListener('load', function() {
+                cb(xhr.response);
+            });
+            xhr.send();
+        };
+
+        var blobToFile = function (blob, name) {
+            blob.lastModifiedDate = new Date();
+            blob.name = name;
+            return blob;
+        };
+
+        var getFileObject = function(filePathOrUrl, cb) {
+            getFileBlob(filePathOrUrl, function (blob) {
+                cb(blobToFile(blob, Math.floor((Math.random() * 1000) + 1)));
+            });
+        };
+
         $(function () {
             var objEditor = $('#editor');
             objEditor.css('height', '400px');
@@ -232,6 +258,8 @@
                     reader.onload = function (e) {
                         $('#blah').attr('src', e.target.result);
                     };
+
+                    console.log(input.files[0]);
 
                     reader.readAsDataURL(input.files[0]);
                 }
@@ -260,9 +288,6 @@
                     remain: {
                         required: true
                     },
-                    thumbimage: {
-                        required: true
-                    },
                     gb_count: {
                         required: true
                     },
@@ -280,6 +305,11 @@
 
             objForm.submit(function (e) {
                 e.preventDefault();
+
+                if (uploader.getFiles().length <= 0) {
+                    alert('请添加图片');
+                    return;
+                }
 
                 var sendData = new FormData();
                 var formData = $(this).serializeArray();
@@ -308,15 +338,19 @@
                     processData: false,
                     contentType: false,
                     success: function (data) {
-                        parent.location.reload();
+                        // 上传图片
+                        uploader.options.formData.product_id = data.product_id;
+                        uploader.upload();
                     },
                     error: function (data) {
                         enableSubmit('butSubmit', true);
+                        $('#butSubmit span').text('保存并提交');
                         console.log(data);
                     }
                 });
 
-            enableSubmit('butSubmit', false);
+                enableSubmit('butSubmit', false);
+                $('#butSubmit span').text('正在提交...');
             });
         });
 
@@ -333,9 +367,6 @@
 
                 // 文件总体选择信息。
                 $info = $statusBar.find('.info'),
-
-                // 上传按钮
-                 $upload = $wrap.find( '.uploadBtn' ),
 
                 // 没选择文件之前的内容。
                 $placeHolder = $wrap.find('.placeholder'),
@@ -401,10 +432,7 @@
                                     'OTransition' in s;
                     s = null;
                     return r;
-                })(),
-
-                // WebUploader实例
-                uploader;
+                })();
 
                 if (!WebUploader.Uploader.support('flash') && WebUploader.browser.ie) {
 
@@ -465,8 +493,7 @@
                         label: '点击选择图片'
                     },
                     formData: {
-                        _token:'{{ csrf_token() }}',
-                        uid: 123
+                        _token:'{{ csrf_token() }}'
                     },
                     dnd: '#dndArea',
                     paste: '#uploader',
@@ -531,6 +558,15 @@
 
                 uploader.on('ready', function () {
                     window.uploader = uploader;
+
+                    // 读取图片文件
+                    @if (!empty($product))
+                        @foreach ($product->images as $img)
+                            getFileObject('{{$img->getImageUrl()}}', function (fileObject) {
+                                uploader.addFile(fileObject);
+                            });
+                        @endforeach
+                        @endif
                 });
 
                 // 当有文件添加进来时执行，负责view的创建
@@ -752,8 +788,6 @@
                         return;
                     }
 
-                     $upload.removeClass( 'state-' + state );
-                     $upload.addClass( 'state-' + val );
                     state = val;
 
                     switch (state) {
@@ -775,18 +809,15 @@
                         case 'uploading':
                             $('#filePicker2').addClass('element-invisible');
                             $progress.show();
-                             $upload.text( '暂停上传' );
                             break;
 
                         case 'paused':
                             $progress.show();
-                             $upload.text( '继续上传' );
                             break;
 
                         case 'confirm':
                             $progress.hide();
                             $('#filePicker2').removeClass('element-invisible');
-                             $upload.text( '开始上传' );
 
                             stats = uploader.getStats();
                             if (stats.successNum && !stats.uploadFailNum) {
@@ -797,8 +828,9 @@
                         case 'finish':
                             stats = uploader.getStats();
                             if (stats.successNum) {
-                                alert('上传成功');
-                            } else {
+                                alert('提交成功！');
+                            }
+                            else {
                                 // 没有成功的图片，重设
                                 state = 'done';
                                 location.reload();
@@ -867,20 +899,6 @@
                     alert('Eroor: ' + code);
                 };
 
-                 $upload.on('click', function() {
-                     if ( $(this).hasClass( 'disabled' ) ) {
-                         return false;
-                     }
-
-                     if ( state === 'ready' ) {
-                         uploader.upload();
-                     } else if ( state === 'paused' ) {
-                         uploader.upload();
-                     } else if ( state === 'uploading' ) {
-                         uploader.stop();
-                     }
-                 });
-
                 $info.on('click', '.retry', function () {
                     uploader.retry();
                 });
@@ -889,7 +907,6 @@
                     alert('todo');
                 });
 
-                 $upload.addClass( 'state-' + state );
                 updateTotalProgress();
             });
 

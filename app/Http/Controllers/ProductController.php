@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Model\ProductImages;
 use App\Product;
 use App\ProductSpec;
 use App\Spec;
@@ -126,37 +127,41 @@ class ProductController extends Controller
     /**
      * 保存商品
      * @param Request $request
+     * @return string
      */
     public function saveProduct(Request $request) {
         if($request->has('product_id')) {
             $pid = $request->input('product_id');
             $p = Product::find($pid);
+
+            // 删除图片
+            $p->images()->delete();
         } else {
             $p = new Product();
         }
 
         // 缩略图
-        $strName = null;
         if ($request->hasFile('thumbimage')) {
             $fileImage = $request->file('thumbimage');
             if ($fileImage->isValid()) {
 
-                // create user photo directory, if not exist
+                // create product photo directory, if not exist
                 if (!file_exists(getProductImagePath())) {
                     File::makeDirectory(getProductImagePath(), 0777, true);
                 }
 
-                // generate file name i**********.ext
+                // generate file name p**********.ext
                 $strName = 'p' . time() . uniqid() . '.' . $fileImage->getClientOriginalExtension();
 
                 // move file to upload folder
                 $fileImage->move(getProductImagePath(), $strName);
+
+                $p->thumbnail = $strName;
             }
         }
 
         $p->name = $request->input('name');
         $p->category_id = $request->input('category_id');
-        $p->thumbnail = $strName;
         $p->price = $request->input('price');
         $p->deliver_cost = $request->input('deliver_cost');
         $p->remain = $request->input('remain');
@@ -170,9 +175,8 @@ class ProductController extends Controller
 
         foreach($specs as $s) {
             $param = "spec".$s->id;
-            echo $param;
+
             if($request->has($param)) {
-                echo "has param";
                 $has = ProductSpec::where('spec_id', $s->id)->where('product_id', $p->id)->first();
 
                 if($has == null) {
@@ -189,6 +193,11 @@ class ProductController extends Controller
                 }
             }
         }
+
+        return response()->json([
+            'status' => 'success',
+            'product_id' => $p->id,
+        ]);
     }
 
     public function deleteProduct(Request $request) {
@@ -203,7 +212,27 @@ class ProductController extends Controller
      * @return string
      */
     public function uploadImage(Request $request) {
+
+        $pId = $request->input('product_id');
+
         $files = $request->allFiles();
+        foreach ($files as $fileImage) {
+            if ($fileImage->isValid()) {
+                // generate file name p**********.ext
+                $strName = 'p' . time() . uniqid() . '.' . $fileImage->getClientOriginalExtension();
+
+                // move file to upload folder
+                $fileImage->move(getProductImagePath(), $strName);
+
+                // 添加到数据库
+                $aryParam = [
+                    'product_id'    => $pId,
+                    'url'           => $strName,
+                ];
+
+                ProductImages::create($aryParam);
+            }
+        }
 
         return response()->json([
             'jsonrpc' => '2.0',

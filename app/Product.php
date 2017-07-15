@@ -37,4 +37,13 @@ class Product extends Model
     public function getThumbnailUrl() {
         return asset('uploads/product/'. $this->thumbnail);
     }
+
+    /**
+     * 获取图片
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function images()
+    {
+        return $this->hasMany('App\Model\ProductImages');
+    }
 }
