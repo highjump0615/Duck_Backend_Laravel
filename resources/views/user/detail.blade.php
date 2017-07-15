@@ -26,6 +26,7 @@
                            autocomplete="off"
                            value=""
                            placeholder="密码"
+                           id="password"
                            name="password">
                 </div>
             </div>
