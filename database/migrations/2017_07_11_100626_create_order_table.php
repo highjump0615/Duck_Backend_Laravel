@@ -30,8 +30,7 @@ class CreateOrderTable extends Migration
             $table->unsignedInteger('groupbuy_id')->comment('拼团');
             $table->string('deliver_code')->nullable()->comment('快递单号');
 
-            $table->tinyInteger('spec_in')->comment('');
-            $table->double('price')->comment('');
+            $table->double('price')->comment('价格');
 
             $table->timestamps();
             $table->softDeletes();

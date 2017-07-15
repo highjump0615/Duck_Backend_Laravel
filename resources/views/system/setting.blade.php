@@ -29,7 +29,7 @@
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-3">包退提示：</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <textarea name="notice_refund" cols="" rows="" class="textarea"  datatype="*10-100" dragonfly="true" nullmsg="提示不能为空！" onKeyUp="textarealength(this,100)">{{$setting->notice_refund}}</textarea>
+                        <textarea name="notice_refund" cols="" rows="" class="textarea"  datatype="*10-100" dragonfly="true" nullmsg="提示不能为空！">{{$setting->notice_refund}}</textarea>
                     </div>
                     <div class="col-5"> </div>
                 </div>
@@ -37,7 +37,7 @@
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-3">拼团提示：</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <textarea name="notice_groupbuy" cols="" rows="" class="textarea"  datatype="*10-100" dragonfly="true" nullmsg="提示不能为空！" onKeyUp="textarealength(this,100)">{{$setting->notice_groupbuy}}</textarea>
+                        <textarea name="notice_groupbuy" cols="" rows="" class="textarea"  datatype="*10-100" dragonfly="true" nullmsg="提示不能为空！">{{$setting->notice_groupbuy}}</textarea>
                     </div>
                     <div class="col-5"> </div>
                 </div>

@@ -19,7 +19,7 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">备注：</label>
                 <div class="formControls col-5">
-                    <textarea name="desc" cols="" rows="" class="textarea"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="textarealength(this,100)">@if(isset($category)){{$category->desc}}@endif</textarea>
+                    <textarea name="desc" cols="" rows="" class="textarea"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！">@if(isset($category)){{$category->desc}}@endif</textarea>
                 </div>
                 <div class="col-5"> </div>
             </div>
@@ -49,12 +49,9 @@
 //                    console.log(data);
                 },
                 error: function (data) {
-                    enableSubmit(true);
                     console.log(data);
                 }
             });
-
-            enableSubmit(false);
         });
     </script>
 @endsection
