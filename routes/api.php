@@ -13,6 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
+
+Route::group(['prefix'=>'/v1'], function() {
+
+    Route::get('/test', function (Request $request) {
+        return "asdf";
+    });
+
+});

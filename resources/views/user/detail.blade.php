@@ -15,7 +15,6 @@
                            class="input-text"
                            @if (!empty($user)) value="{{$user->username}}" @endif
                            placeholder="用户名"
-                           id="adminName"
                            name="username">
                 </div>
             </div>
@@ -27,7 +26,6 @@
                            autocomplete="off"
                            value=""
                            placeholder="密码"
-                           id="password"
                            name="password">
                 </div>
             </div>
@@ -38,7 +36,6 @@
                            class="input-text"
                            autocomplete="off"
                            placeholder="确认新密码"
-                           id="password2"
                            name="password2">
                 </div>
             </div>

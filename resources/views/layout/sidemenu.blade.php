@@ -35,7 +35,7 @@
                         <a href="{{url('/category')}}" title="分类管理">分类管理</a>
                     </li>
                     <li @if ($page == "product.list") class="current" @endif>
-                        <a href="{{url('/products')}}" title="产品列表">产品列表</a>
+                        <a href="{{url('/products')}}" title="商品列表">商品列表</a>
                     </li>
                 </ul>
             </dd>

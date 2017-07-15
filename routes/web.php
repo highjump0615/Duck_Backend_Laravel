@@ -31,6 +31,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/product/new', 'ProductController@showProduct');
     Route::get('/product/{id}/edit', 'ProductController@showProduct');
     Route::post('/product', 'ProductController@saveProduct');
+    Route::post('/product/uploadImage', 'ProductController@uploadImage');
     Route::delete('/product', 'ProductController@deleteProduct');
 
     Route::post('/rule', 'ProductController@addRule');

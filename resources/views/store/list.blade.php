@@ -22,7 +22,7 @@
                         <i class="Hui-iconfont">&#xe600;</i> 添加门店
                     </a>
 				</span>
-                    <span class="r">共有数据：<strong>23</strong> 条</span>
+                    <span class="r">共有数据：<strong>{{count($stores)}}</strong> 条</span>
                 </div>
                 <div class="mt-10">
                     <table class="table table-border table-bordered table-bg">

@@ -22,11 +22,19 @@ class Product extends Model
     }
 
     public function hasSpec($spec_id) {
-        $s = ProductSpec::where('product_id', $this->id)->where('spec_id', $spec_id)->get()->first();
+        $s = ProductSpec::where('product_id', $this->id)->where('spec_id', $spec_id)->first();
 
         if($s == null)
             return false;
         else
             return true;
+    }
+
+    /**
+     * 获取图片url
+     * @return string
+     */
+    public function getThumbnailUrl() {
+        return asset('uploads/product/'. $this->thumbnail);
     }
 }

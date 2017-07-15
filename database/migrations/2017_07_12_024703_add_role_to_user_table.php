@@ -32,7 +32,7 @@ class AddRoleToUserTable extends Migration
     public function down()
     {
         Schema::table(CreateUsersTable::$tableName, function (Blueprint $table) {
-            $table->dropForeign(CreateOrderTable::$tableName.'_role_id_foreign');
+            $table->dropForeign(CreateUsersTable::$tableName.'_role_id_foreign');
             $table->dropColumn('role_id');
         });
     }

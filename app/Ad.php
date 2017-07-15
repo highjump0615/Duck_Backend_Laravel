@@ -11,6 +11,10 @@ class Ad extends Model
         'product_id', 'image_url', 'start_at', 'end_at',
     ];
 
+    protected $appends = [
+        'image_full_path',
+    ];
+
     public $timestamps = true;
 
     public function product() {

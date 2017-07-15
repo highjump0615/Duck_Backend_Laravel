@@ -96,12 +96,26 @@
         });
 
         $(function(){
+            $("#form-article-add").validate({
+                rules:{
+                    image:{
+                        required:true
+                    },
+                    product_id:{
+                        required:true
+                    },
+                    start_at:{
+                        required:true
+                    },
+                    end_at:{
+                        required:true
+                    }
+                },
+                onkeyup:false,
+                focusCleanup:true,
+                success:"valid"
+            });
         });
-
-        function onCancel() {
-            history.back();
-        }
-
     </script>
 
 @endsection

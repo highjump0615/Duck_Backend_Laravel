@@ -21,7 +21,7 @@
 						    <i class="Hui-iconfont">&#xe600;</i> 添加宣传
                         </a>
 					</span>
-                        <span class="r">共有数据：<strong>54</strong> 条</span>
+                        <span class="r">共有数据：<strong>{{count($ads)}}</strong> 条</span>
                     </div>
                     <div class="mt-20">
                         <table class="table table-border table-bordered table-bg table-hover">

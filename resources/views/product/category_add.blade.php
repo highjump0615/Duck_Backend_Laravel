@@ -20,7 +20,6 @@
                 <label class="form-label col-xs-4 col-sm-2">备注：</label>
                 <div class="formControls col-5">
                     <textarea name="desc" cols="" rows="" class="textarea"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="textarealength(this,100)">@if(isset($category)){{$category->desc}}@endif</textarea>
-                    <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
                 </div>
                 <div class="col-5"> </div>
             </div>

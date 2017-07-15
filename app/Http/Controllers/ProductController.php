@@ -8,6 +8,8 @@ use App\ProductSpec;
 use App\Spec;
 use Illuminate\Http\Request;
 
+use File;
+
 class ProductController extends Controller
 {
     public function showCategory(Request $request) {
@@ -98,6 +100,11 @@ class ProductController extends Controller
         }
     }
 
+    /**
+     * 添加规格
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addRule(Request $request) {
         $name = $request->input('name');
 
@@ -111,9 +118,15 @@ class ProductController extends Controller
             abort(409);
         }
 
-
+        return response()->json([
+            'rule' => $spec->id,
+        ]);
     }
 
+    /**
+     * 保存商品
+     * @param Request $request
+     */
     public function saveProduct(Request $request) {
         if($request->has('product_id')) {
             $pid = $request->input('product_id');
@@ -122,8 +135,28 @@ class ProductController extends Controller
             $p = new Product();
         }
 
+        // 缩略图
+        $strName = null;
+        if ($request->hasFile('thumbimage')) {
+            $fileImage = $request->file('thumbimage');
+            if ($fileImage->isValid()) {
+
+                // create user photo directory, if not exist
+                if (!file_exists(getProductImagePath())) {
+                    File::makeDirectory(getProductImagePath(), 0777, true);
+                }
+
+                // generate file name i**********.ext
+                $strName = 'p' . time() . uniqid() . '.' . $fileImage->getClientOriginalExtension();
+
+                // move file to upload folder
+                $fileImage->move(getProductImagePath(), $strName);
+            }
+        }
+
         $p->name = $request->input('name');
         $p->category_id = $request->input('category_id');
+        $p->thumbnail = $strName;
         $p->price = $request->input('price');
         $p->deliver_cost = $request->input('deliver_cost');
         $p->remain = $request->input('remain');
@@ -140,7 +173,7 @@ class ProductController extends Controller
             echo $param;
             if($request->has($param)) {
                 echo "has param";
-                $has = ProductSpec::where('spec_id', $s->id)->where('product_id', $p->id)->get()->first();
+                $has = ProductSpec::where('spec_id', $s->id)->where('product_id', $p->id)->first();
 
                 if($has == null) {
                     $ps = new ProductSpec();
@@ -149,20 +182,33 @@ class ProductController extends Controller
                     $ps->save();
                 }
             } else {
-                $has = ProductSpec::where('spec_id', $s->id)->where('product_id', $p->id)->get()->first();
+                $has = ProductSpec::where('spec_id', $s->id)->where('product_id', $p->id)->first();
 
                 if($has != null) {
                     $has->delete();
                 }
             }
         }
-
-
     }
 
     public function deleteProduct(Request $request) {
         $pid = $request->input('product_id');
         $p = Product::find($pid);
         $p->delete();
+    }
+
+    /**
+     * 上传图片
+     * @param Request $request
+     * @return string
+     */
+    public function uploadImage(Request $request) {
+        $files = $request->allFiles();
+
+        return response()->json([
+            'jsonrpc' => '2.0',
+            'result' => null,
+            'id' => 'id',
+        ]);
     }
 }

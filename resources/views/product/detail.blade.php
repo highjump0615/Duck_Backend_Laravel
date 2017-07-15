@@ -22,73 +22,89 @@
     @include('layout.sidemenu')
 
     <section class="Hui-article-box" style="overflow: auto;">
-        <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span
-                    class="c-gray en">&gt;</span> 产品 <a class="btn btn-success radius r"
-                                                        style="line-height:1.6em;margin-top:3px"
-                                                        href="javascript:location.replace(location.href);" title="刷新"><i
-                        class="Hui-iconfont">&#xe68f;</i></a></nav>
+        <!-- 面包屑 -->
+        <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页
+            <span class="c-gray en">&gt;</span> 商品管理
+            <span class="c-gray en">&gt;</span> 商品
+            <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新">
+                <i class="Hui-iconfont">&#xe68f;</i>
+            </a>
+        </nav>
+
         <div class="page-container">
-            <form action="{{url('/product')}}" method="post" class="form form-horizontal" id="form-product">
+            <form action="{{url('/product')}}" method="post" class="form form-horizontal" id="form-product" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 @if(isset($product))
                     <input type="hidden" name="product_id" value="{{$product->id}}">
                 @endif
+
+                <!-- 名称 -->
                 <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品标题：</label>
+                    <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>商品标题：</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <input type="text" class="input-text" @if(isset($product)) value="{{$product->name}}"
-                               @endif placeholder="" id="" name="name">
+                        <input type="text"
+                               class="input-text"
+                               @if(isset($product)) value="{{$product->name}}" @endif
+                               name="name">
                     </div>
                 </div>
+
+                <!-- 分类 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分类：</label>
-                    <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
-       <select name="category_id" class="select">
-           @foreach($categories as $c)
-               @if(isset($product) && $product->category_id == $c->id)
-                   <option value="{{$c->id}}" selected>{{$c->name}}</option>
-               @else
-                   <option value="{{$c->id}}">{{$c->name}}</option>
-               @endif
-
-           @endforeach
-       </select>
-       </span></div>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <span class="select-box">
+                           <select name="category_id" class="select">
+                               @foreach($categories as $c)
+                                   @if(isset($product) && $product->category_id == $c->id)
+                                       <option value="{{$c->id}}" selected>{{$c->name}}</option>
+                                   @else
+                                       <option value="{{$c->id}}">{{$c->name}}</option>
+                                   @endif
+                               @endforeach
+                           </select>
+                       </span>
+                    </div>
                 </div>
+
+                <!-- 规格 -->
                 <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2">产品规格：</label>
+                    <label class="form-label col-xs-4 col-sm-2">商品规格：</label>
+                    <!-- 规格列表 -->
                     <div class="formControls col-xs-8 col-sm-9">
                         <div class="prod-spec">
                             @foreach($specs as $s)
                                 <label class="">
                                     @if(isset($product) && $product->hasSpec($s->id))
-                                        <input type="checkbox" value="1" name="spec{{$s->id}}" id="user-Character-0-0"
-                                               checked>
+                                        <input type="checkbox" value="1" name="spec{{$s->id}}" checked />
                                     @else
-                                        <input type="checkbox" value="1" name="spec{{$s->id}}" id="user-Character-0-0">
+                                        <input type="checkbox" value="1" name="spec{{$s->id}}" />
                                     @endif
                                     {{$s->name}}
                                 </label>
                             @endforeach
-
                         </div>
+                        <!-- 添加规格 -->
                         <div class="add-spec">
-
-                            <input type="text" id="rule-name" class="input-text" value="" placeholder="添加规则"
+                            <input type="text" id="rule-name" class="input-text" value="" placeholder="添加规格"
                                    style="width:200px;">
                             <input type="button" id="btn-rule-add" class="btn btn-default" value="添加">
                         </div>
                     </div>
                 </div>
+
+                <!-- 原价 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">原价：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" name="price" id="price" placeholder=""
                                @if(isset($product)) value="{{$product->price}}" @endif class="input-text"
                                style="width:90%">
-                        <元></元>
+                        元
                     </div>
                 </div>
+
+                <!-- 运费 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">运费：</label>
                     <div class="formControls col-xs-8 col-sm-9">
@@ -98,6 +114,8 @@
                         元
                     </div>
                 </div>
+
+                <!-- 库存 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">库存：</label>
                     <div class="formControls col-xs-8 col-sm-9">
@@ -105,35 +123,49 @@
                                @if(isset($product)) value="{{$product->remain}}" @endif>
                     </div>
                 </div>
+
+                <!-- 拼团设置 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">拼团设置</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <input type="text" name="gb_count" placeholder="输入人数底线"
-                               @if(isset($product)) value="{{$product->gb_count}}" @endif class="input-text"
+                        <input type="text"
+                               name="gb_count"
+                               placeholder="输入人数底线"
+                               @if(isset($product)) value="{{$product->gb_count}}" @endif
+                               class="input-text"
                                style=" width:20%">
                         人&nbsp;&nbsp;&nbsp;
-                        <input type="text" name="gb_price" placeholder="输入拼团价"
-                               @if(isset($product)) value="{{$product->gb_price}}" @endif class="input-text"
+                        <input type="text"
+                               name="gb_price"
+                               placeholder="输入拼团价"
+                               @if(isset($product)) value="{{$product->gb_price}}" @endif
+                               class="input-text"
                                style=" width:20%">
                         元&nbsp;&nbsp;&nbsp;
-                        <input type="text" name="gb_timeout" placeholder="输入倒计时"
-                               @if(isset($product)) value="{{$product->gb_timeout}}" @endif class="input-text"
+                        <input type="text"
+                               name="gb_timeout"
+                               placeholder="输入倒计时"
+                               @if(isset($product)) value="{{$product->gb_timeout}}" @endif
+                               class="input-text"
                                style=" width:20%">
                         小时
                     </div>
                 </div>
+
+                <!-- 缩略图 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">缩略图：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <div class="uploader-thum-container">
-                            <!--<div id="fileList" class="uploader-list"></div>
-                            <div id="filePicker">选择图片</div>-->
-                            <!--<button id="btn-star" class="btn btn-default btn-uploadstar radius ml-10">开始上传</button>-->
-                            <input type='file' id="imgInp"/>
-                            <img id="blah" src="" style="width:80px; height: 80px;"/>
+                            <input type="file" id="imgInp" name="thumbimage"/>
+                            <img id="blah"
+                                 style="width:80px; height: 80px;"
+                                 @if (!empty($product)) src="{{$product->getThumbnailUrl()}}" @endif />
                         </div>
                     </div>
                 </div>
+
+                <!-- 图片 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">图片上传：</label>
                     <div class="formControls col-xs-8 col-sm-9">
@@ -150,24 +182,28 @@
                                 <div class="info"></div>
                                 <div class="btns">
                                     <div id="filePicker2"></div>
-                                    <!-- <div class="uploadBtn">开始上传</div> -->
+                                    <div class="uploadBtn">开始上传</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- 详细内容 -->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">详细内容：</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <script id="editor" type="text/plain" style="width:100%;height:400px;"></script>
+                        <script id="editor" type="text/plain" ></script>
                     </div>
                 </div>
+
+
                 <div class="row cl">
                     <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                        <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i>
-                            保存并提交审核
+                        <button id="butSubmit" class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i>
+                            保存并提交
                         </button>
-                        <button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+                        <button onClick="onCancel();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
                     </div>
                 </div>
             </form>
@@ -183,13 +219,19 @@
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js')?>"></script>
     <script>
         $(function () {
+            var objEditor = $('#editor');
+            objEditor.css('height', '400px');
+            objEditor.css('width', '100%');
+
+            var ue = UE.getEditor('editor');
+
             function readURL(input) {
                 if (input.files && input.files[0]) {
                     var reader = new FileReader();
 
                     reader.onload = function (e) {
                         $('#blah').attr('src', e.target.result);
-                    }
+                    };
 
                     reader.readAsDataURL(input.files[0]);
                 }
@@ -199,201 +241,170 @@
                 readURL(this);
             });
 
-// $('.skin-minimal input').iCheck({
-// 	checkboxClass: 'icheckbox-blue',
-// 	radioClass: 'iradio-blue',
-// 	increaseArea: '20%'
-// });
+            var objForm = $("#form-product");
 
-// $list = $("#fileList"),
-// $btn = $("#btn-star"),
-// state = "pending",
-// uploader;
+            objForm.validate({
+                rules:{
+                    name:{
+                        required: true
+                    },
+                    category_id: {
+                        required: true
+                    },
+                    price: {
+                        required: true
+                    },
+                    deliver_cost: {
+                        required: true
+                    },
+                    remain: {
+                        required: true
+                    },
+                    thumbimage: {
+                        required: true
+                    },
+                    gb_count: {
+                        required: true
+                    },
+                    gb_price: {
+                        required: true
+                    },
+                    gb_timeout: {
+                        required: true
+                    }
+                },
+                onkeyup:false,
+                focusCleanup:true,
+                success:"valid",
+            });
 
-// var uploader = WebUploader.create({
-// 	auto: true,
-// 	swf: 'lib/webuploader/0.1.5/Uploader.swf',
+            objForm.submit(function (e) {
+                e.preventDefault();
 
-// 	// 文件接收服务端。
-// 	server: 'http://lib.h-ui.net/webuploader/0.1.5/server/fileupload.php',
+                var sendData = new FormData();
+                var formData = $(this).serializeArray();
 
-// 	// 选择文件的按钮。可选。
-// 	// 内部根据当前运行是创建，可能是input元素，也可能是flash.
-// 	pick: '#filePicker',
+                $.each(formData, function (i, field) {
+                    sendData.append(field.name, field.value);
+                });
 
-// 	// 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
-// 	resize: false,
-// 	// 只允许选择图片文件。
-// 	accept: {
-// 		title: 'Images',
-// 		extensions: 'gif,jpg,jpeg,bmp,png',
-// 		mimeTypes: 'image/*'
-// 	}
-// });
-// uploader.onFileQueued = function( file ) {
-// //uploader.on( 'fileQueued', function( file ) {
-// 	console.log(file);
-// 	var $li = $(
-// 		'<div id="' + file.id + '" class="item">' +
-// 			'<div class="pic-box"><img></div>'+
-// 			'<div class="info">' + file.name + '</div>' +
-// 			'<p class="state">等待上传...</p>'+
-// 		'</div>'
-// 	),
-// 	$img = $li.find('img');
-// 	$list.append( $li );
+                //
+                // 缩略图
+                //
+                var objImg = $('#imgInp')[0];
+                if (objImg && objImg.files[0])
+                {
+                    sendData.append('thumbimage', objImg.files[0]);
+                }
 
-// 	// 创建缩略图
-// 	// 如果为非图片文件，可以不用调用此方法。
-// 	// thumbnailWidth x thumbnailHeight 为 100 x 100
-// 	uploader.makeThumb( file, function( error, src ) {
-// 		if ( error ) {
-// 			$img.replaceWith('<span>不能预览</span>');
-// 			return;
-// 		}
+                var content = UE.getEditor('editor').getContent();
+                sendData.append('rtf_content', content);
 
-// 		$img.attr( 'src', src );
-// 	}, thumbnailWidth, thumbnailHeight );
-// };
-// // 文件上传过程中创建进度条实时显示。
-// uploader.on( 'uploadProgress', function( file, percentage ) {
-// 	var $li = $( '#'+file.id ),
-// 		$percent = $li.find('.progress-box .sr-only');
+                // 提交
+                $.ajax({
+                    type: 'POST',
+                    url: '{{'/product'}}',
+                    data: sendData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        parent.location.reload();
+                    },
+                    error: function (data) {
+                        enableSubmit('butSubmit', true);
+                        console.log(data);
+                    }
+                });
 
-// 	// 避免重复创建
-// 	if ( !$percent.length ) {
-// 		$percent = $('<div class="progress-box"><span class="progress-bar radius"><span class="sr-only" style="width:0%"></span></span></div>').appendTo( $li ).find('.sr-only');
-// 	}
-// 	$li.find(".state").text("上传中");
-// 	$percent.css( 'width', percentage * 100 + '%' );
-// });
-
-// // 文件上传成功，给item添加成功class, 用样式标记上传成功。
-// uploader.on( 'uploadSuccess', function( file ) {
-// 	$( '#'+file.id ).addClass('upload-state-success').find(".state").text("已上传");
-// });
-
-// // 文件上传失败，显示上传出错。
-// uploader.on( 'uploadError', function( file ) {
-// 	$( '#'+file.id ).addClass('upload-state-error').find(".state").text("上传出错");
-// });
-
-// // 完成上传完了，成功或者失败，先删除进度条。
-// uploader.on( 'uploadComplete', function( file ) {
-// 	$( '#'+file.id ).find('.progress-box').fadeOut();
-// });
-// uploader.on('all', function (type) {
-//        if (type === 'startUpload') {
-//            state = 'uploading';
-//        } else if (type === 'stopUpload') {
-//            state = 'paused';
-//        } else if (type === 'uploadFinished') {
-//            state = 'done';
-//        }
-
-//        // if (state === 'uploading') {
-//        //     $btn.text('暂停上传');
-//        // } else {
-//        //     $btn.text('开始上传');
-//        // }
-//    });
-
-//    // $btn.on('click', function () {
-//    //     if (state === 'uploading') {
-//    //         uploader.stop();
-//    //     } else {
-//    //         uploader.upload();
-//    //     }
-//    // });
-
+            enableSubmit('butSubmit', false);
+            });
         });
 
         (function ($) {
-// 当domReady的时候开始初始化
+            // 当domReady的时候开始初始化
             $(function () {
                 var $wrap = $('.uploader-list-container'),
 
                 // 图片容器
-                        $queue = $('<ul class="filelist"></ul>')
-                                .appendTo($wrap.find('.queueList')),
+                $queue = $('<ul class="filelist"></ul>').appendTo($wrap.find('.queueList')),
 
                 // 状态栏，包括进度和控制按钮
-                        $statusBar = $wrap.find('.statusBar'),
+                $statusBar = $wrap.find('.statusBar'),
 
                 // 文件总体选择信息。
-                        $info = $statusBar.find('.info'),
+                $info = $statusBar.find('.info'),
 
                 // 上传按钮
-                // $upload = $wrap.find( '.uploadBtn' ),
+                 $upload = $wrap.find( '.uploadBtn' ),
 
                 // 没选择文件之前的内容。
-                        $placeHolder = $wrap.find('.placeholder'),
+                $placeHolder = $wrap.find('.placeholder'),
 
-                        $progress = $statusBar.find('.progress').hide(),
+                $progress = $statusBar.find('.progress').hide(),
 
                 // 添加的文件数量
-                        fileCount = 0,
+                fileCount = 0,
 
                 // 添加的文件总大小
-                        fileSize = 0,
+                fileSize = 0,
 
                 // 优化retina, 在retina下这个值是2
-                        ratio = window.devicePixelRatio || 1,
+                ratio = window.devicePixelRatio || 1,
 
                 // 缩略图大小
-                        thumbnailWidth = 110 * ratio,
-                        thumbnailHeight = 110 * ratio,
+                thumbnailWidth = 110 * ratio,
+                thumbnailHeight = 110 * ratio,
 
                 // 可能有pedding, ready, uploading, confirm, done.
-                        state = 'pedding',
+                state = 'pedding',
 
                 // 所有文件的进度信息，key为file id
-                        percentages = {},
+                percentages = {},
                 // 判断浏览器是否支持图片的base64
-                        isSupportBase64 = (function () {
-                            var data = new Image();
-                            var support = true;
-                            data.onload = data.onerror = function () {
-                                if (this.width != 1 || this.height != 1) {
-                                    support = false;
-                                }
-                            }
-                            data.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-                            return support;
-                        })(),
+                isSupportBase64 = (function () {
+                    var data = new Image();
+                    var support = true;
+                    data.onload = data.onerror = function () {
+                        if (this.width != 1 || this.height != 1) {
+                            support = false;
+                        }
+                    }
+                    data.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+                    return support;
+                })(),
 
                 // 检测是否已经安装flash，检测flash的版本
-                        flashVersion = (function () {
-                            var version;
+                flashVersion = (function () {
+                    var version;
 
-                            try {
-                                version = navigator.plugins['Shockwave Flash'];
-                                version = version.description;
-                            } catch (ex) {
-                                try {
-                                    version = new ActiveXObject('ShockwaveFlash.ShockwaveFlash')
-                                            .GetVariable('$version');
-                                } catch (ex2) {
-                                    version = '0.0';
-                                }
-                            }
-                            version = version.match(/\d+/g);
-                            return parseFloat(version[0] + '.' + version[1], 10);
-                        })(),
+                    try {
+                        version = navigator.plugins['Shockwave Flash'];
+                        version = version.description;
+                    } catch (ex) {
+                        try {
+                            version = new ActiveXObject('ShockwaveFlash.ShockwaveFlash')
+                                    .GetVariable('$version');
+                        } catch (ex2) {
+                            version = '0.0';
+                        }
+                    }
+                    version = version.match(/\d+/g);
+                    return parseFloat(version[0] + '.' + version[1], 10);
+                })(),
 
-                        supportTransition = (function () {
-                            var s = document.createElement('p').style,
-                                    r = 'transition' in s ||
-                                            'WebkitTransition' in s ||
-                                            'MozTransition' in s ||
-                                            'msTransition' in s ||
-                                            'OTransition' in s;
-                            s = null;
-                            return r;
-                        })(),
+                supportTransition = (function () {
+                    var s = document.createElement('p').style,
+                            r = 'transition' in s ||
+                                    'WebkitTransition' in s ||
+                                    'MozTransition' in s ||
+                                    'msTransition' in s ||
+                                    'OTransition' in s;
+                    s = null;
+                    return r;
+                })(),
 
                 // WebUploader实例
-                        uploader;
+                uploader;
 
                 if (!WebUploader.Uploader.support('flash') && WebUploader.browser.ie) {
 
@@ -454,6 +465,7 @@
                         label: '点击选择图片'
                     },
                     formData: {
+                        _token:'{{ csrf_token() }}',
                         uid: 123
                     },
                     dnd: '#dndArea',
@@ -461,7 +473,8 @@
                     swf: 'lib/webuploader/0.1.5/Uploader.swf',
                     chunked: false,
                     chunkSize: 512 * 1024,
-                    server: 'http://lib.h-ui.net/webuploader/0.1.5/server/fileupload.php',
+                    method: 'POST',
+                    server: '{{url("/product/uploadImage")}}',
                     // runtimeOrder: 'flash',
 
                     // accept: {
@@ -739,8 +752,8 @@
                         return;
                     }
 
-                    // $upload.removeClass( 'state-' + state );
-                    // $upload.addClass( 'state-' + val );
+                     $upload.removeClass( 'state-' + state );
+                     $upload.addClass( 'state-' + val );
                     state = val;
 
                     switch (state) {
@@ -762,18 +775,18 @@
                         case 'uploading':
                             $('#filePicker2').addClass('element-invisible');
                             $progress.show();
-                            // $upload.text( '暂停上传' );
+                             $upload.text( '暂停上传' );
                             break;
 
                         case 'paused':
                             $progress.show();
-                            // $upload.text( '继续上传' );
+                             $upload.text( '继续上传' );
                             break;
 
                         case 'confirm':
                             $progress.hide();
                             $('#filePicker2').removeClass('element-invisible');
-                            // $upload.text( '开始上传' );
+                             $upload.text( '开始上传' );
 
                             stats = uploader.getStats();
                             if (stats.successNum && !stats.uploadFailNum) {
@@ -854,19 +867,19 @@
                     alert('Eroor: ' + code);
                 };
 
-                // $upload.on('click', function() {
-                //     if ( $(this).hasClass( 'disabled' ) ) {
-                //         return false;
-                //     }
+                 $upload.on('click', function() {
+                     if ( $(this).hasClass( 'disabled' ) ) {
+                         return false;
+                     }
 
-                //     if ( state === 'ready' ) {
-                //         uploader.upload();
-                //     } else if ( state === 'paused' ) {
-                //         uploader.upload();
-                //     } else if ( state === 'uploading' ) {
-                //         uploader.stop();
-                //     }
-                // });
+                     if ( state === 'ready' ) {
+                         uploader.upload();
+                     } else if ( state === 'paused' ) {
+                         uploader.upload();
+                     } else if ( state === 'uploading' ) {
+                         uploader.stop();
+                     }
+                 });
 
                 $info.on('click', '.retry', function () {
                     uploader.retry();
@@ -876,67 +889,62 @@
                     alert('todo');
                 });
 
-                // $upload.addClass( 'state-' + state );
+                 $upload.addClass( 'state-' + state );
                 updateTotalProgress();
             });
 
         })(jQuery);
-
-        $(function () {
-            var ue = UE.getEditor('editor');
-        });
 
         $('#btn-rule-add').on('click', function (e) {
             e.preventDefault();
 
             console.log('adding rule');
             var rule = $('#rule-name').val();
-            console.log('rule name:' + rule);
-// 提交
+            if (rule.length <= 0) {
+                return;
+            }
+
+            // 提交
             $.ajax({
                 type: 'POST',
                 url: '{{'/rule'}}',
                 data: {
                     'name': rule,
-                    "_token": "{{ csrf_token() }}",
+                    "_token": "{{ csrf_token() }}"
                 },
                 success: function (data) {
-                    parent.location.reload();
+                    enableSubmit('btn-rule-add', true);
+
+                    // 添加到主页面
+                    $('.prod-spec').append('<input type="checkbox" value="1" name="' + data.rule + '" checked /> ' + rule);
+
+                    // 清空规则输入
+                    $('#rule-name').val('');
                 },
                 error: function (data) {
+                    enableSubmit('btn-rule-add', true);
                     console.log(data);
                 }
             });
 
+            enableSubmit('btn-rule-add', false);
         });
 
-
-        $('#form-product').submit(function (e) {
-            e.preventDefault();
-
-            var formData = $(this).serializeArray();
-
-            var content = UE.getEditor('editor').getContent();
-
-            formData.push({name: 'rtf_content', value: content});
-
-// 提交
-            $.ajax({
-                type: 'POST',
-                url: '{{'/product'}}',
-                data: formData,
-                success: function (data) {
-                    parent.location.reload();
-//                    console.log(data);
-                },
-                error: function (data) {
-//                    enableSubmit(true);
-                    console.log(data);
-                }
-            });
-
-//            enableSubmit(false);
-        });
+        /**
+         * 使用/禁用按钮
+         * @param strId
+         */
+        function enableSubmit(strId, enable) {
+            var objSubmit = $('#' + strId);
+            if (enable) {
+                objSubmit.removeClass('disabled');
+                objSubmit.removeAttr('disabled');
+            }
+            else {
+                objSubmit.addClass('disabled');
+                objSubmit.attr('disabled');
+            }
+        }
 
         UE.getEditor('editor').ready(function() {
             @if(isset($product))
