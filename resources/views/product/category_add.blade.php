@@ -42,7 +42,7 @@
             // 提交
             $.ajax({
                 type: 'POST',
-                url: '{{'/category'}}',
+                url: '{{url("/category")}}',
                 data: $(this).serializeArray(),
                 success: function (data) {
                     parent.location.reload();
