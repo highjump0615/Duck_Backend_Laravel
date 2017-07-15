@@ -104,7 +104,7 @@
                 // 提交
                 $.ajax({
                     type: 'POST',
-                    url: '/user/save',
+                    url: '{{url("/user/save")}}',
                     data: $(this).serializeArray(),
                     success: function (data) {
                         parent.location.reload();
