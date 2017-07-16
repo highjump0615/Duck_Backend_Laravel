@@ -19,7 +19,6 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $appends = [
-        'customer_name', 'product_name', 'spec_name', 'deliver_mode_str', 'status_str', 'product_category_name',
     ];
 
     const STATUS_GROUPBUY_WAITING = 1;
@@ -28,45 +27,35 @@ class Order extends Model
     const STATUS_RECEIVED = 15;
     const STATUS_REFUNDED = 20;
 
+    const DELIVER_EXPRESS = 0;
+    const DELIVER_SELF = 1;
+
     const STATUS_PAY_PAID = 0;
-    const STATYS_PAY_REFUNDED = 1;
+    const STATUS_PAY_REFUNDED = 1;
 
-    public function getCustomerNameAttribute() {
-        $c = Customer::find($this->customer_id);
-        return $c->name;
-    }
-
-    public function getProductNameAttribute() {
-        $p = Product::find($this->product_id);
-        return $p->name;
-    }
-
-    public function getProductCategoryNameAttribute() {
-        $p = Product::find($this->product_id);
-        return $p->category->name;
-    }
-
-    public function getSpecNameAttribute() {
-        $s = Spec::find($this->spec_id);
-        return $s->name;
-    }
-
-    public function getDeliverModeStrAttribute() {
-        if(empty($this->store_id)) {
+    /**
+     * 获取配送方式名称
+     * @return string
+     */
+    public function getDeliveryName() {
+        if ($this->channel == Order::DELIVER_EXPRESS) {
             return "发货";
         } else {
             return "自提";
         }
     }
 
-    public function getStatusStrAttribute() {
-        $s = $this->status;
-
-        switch($s) {
+    /**
+     * 获取状态名称
+     * @param $status
+     * @return string
+     */
+    public static function getStatusName($status) {
+        switch($status) {
             case Order::STATUS_GROUPBUY_WAITING:
                 return "拼团中";
             case Order::STATUS_INIT:
-                return "代发货";
+                return "待发货";
             case Order::STATUS_SENT:
                 return "待收货";
             case Order::STATUS_RECEIVED:
@@ -76,6 +65,10 @@ class Order extends Model
         }
     }
 
+    /**
+     * 获取状态历史
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function histories() {
         return $this->hasMany('App\OrderHistory');
     }
@@ -94,6 +87,30 @@ class Order extends Model
      */
     public function customer() {
         return $this->belongsTo('App\Model\Customer');
+    }
+
+    /**
+     * 获取商品
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function product() {
+        return $this->belongsTo('App\Product');
+    }
+
+    /**
+     * 获取商品规格
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function spec() {
+        return $this->belongsTo('App\Spec');
+    }
+
+    /**
+     * 获取门店
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function store() {
+        return $this->belongsTo('App\Store');
     }
 
     /**

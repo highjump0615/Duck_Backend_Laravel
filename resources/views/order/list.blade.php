@@ -38,14 +38,14 @@
                             @foreach($orders as $o)
                             <tr class="text-c va-m">
                                 <td>{{$o->id}}</td>
-                                <td>{{$o->product_name}}</td>
+                                <td>{{$o->product->name}}</td>
                                 <td class="text-l">{{$o->count}}</td>
-                                <td class="text-l">{{$o->spec_name}}</td>
+                                <td class="text-l">{{$o->spec->name}}</td>
                                 <td class="text-l">{{$o->name}}</td>
                                 <td class="text-l">{{$o->phone}}</td>
-                                <td class="text-l">{{$o->deliver_mode_str}}</td>
+                                <td class="text-l">{{$o->getDeliveryName()}}</td>
                                 <td><span class="price">{{$o->price}}</span> 元</td>
-                                <td class="td-status">{{$o->status_str}}</td>
+                                <td class="td-status">{{\App\Order::getStatusName($o->status)}}</td>
                                 <td class="td-manage">
                                     <a style="text-decoration:none"
                                        class="ml-5"

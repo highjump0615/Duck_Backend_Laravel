@@ -35,13 +35,13 @@
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">名称</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="{{$order->product_name}}" class="input-text" readonly>
+                                            <input type="text" value="{{$order->product->name}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">分类</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="{{$order->product_category_name}}" class="input-text" readonly>
+                                            <input type="text" value="{{$order->product->category->name}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -75,7 +75,7 @@
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">渠道</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="{{$order->deliver_mode_str}}" class="input-text" readonly>
+                                            <input type="text" value="{{$order->getDeliveryName()}}" class="input-text" readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-8">
@@ -118,7 +118,7 @@
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">订单状态：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" value="{{$order->status_str}}" class="input-text" readonly>
+                                    <input type="text" value="{{\App\Order::getStatusName($order->status)}}" class="input-text" readonly>
                                 </div>
                             </div>
                             <div class="row cl">

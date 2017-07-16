@@ -6,6 +6,8 @@ use App\Groupbuy;
 use App\Order;
 use App\Product;
 use DateTime;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +27,10 @@ class OrderController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getOrderList(Request $request) {
-        $orders = Order::all();
+        $orders = Order::with('product')
+            ->with('spec')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('order.list', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
@@ -120,6 +125,120 @@ class OrderController extends Controller
 
         return response()->json([
             'status' => 'success',
+        ]);
+    }
+
+    /**
+     * 获取基础query
+     * @param Request $request
+     * @return Builder
+     */
+    private function getBaseOrderQuery(Request $request) {
+        $nCustomerId = $request->input('customer_id');
+
+        return Order::with('product')
+            ->with('spec')
+            ->where('customer_id', $nCustomerId)
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * 获取我的拼团列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getGroupbuysApi(Request $request) {
+        $query = $this->getBaseOrderQuery($request);
+
+        $orders = $query->whereNotNull('groupbuy_id')
+            ->get();
+
+        $result = [];
+        foreach ($orders as $order) {
+            $orderInfo = $this->getOrderInfoSimple($order);
+
+            $orderInfo['groupbuy'][] = [
+                'persons' => $order->groupBuy->getPeopleCount(),
+                'remain_time' => $order->groupBuy->getRemainTime(),
+            ];
+
+            // 添加拼团信息
+            $result[] = $orderInfo;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $result,
+        ]);
+    }
+
+    /**
+     * 设置订单信息
+     * @param Order $order
+     * @return array
+     */
+    private function getOrderInfoSimple(Order $order) {
+        $orderInfo = [];
+
+        $orderInfo['id'] = $order->id;
+        $orderInfo['status'] = Order::getStatusName($order->status);
+        $orderInfo['product_image'] = $order->product->getThumbnailUrl();
+        $orderInfo['product_name'] = $order->product->name;
+        $orderInfo['product_price'] = $order->product->price;
+        $orderInfo['count'] = $order->count;
+        $orderInfo['is_groupbuy'] = !empty($order->groupbuy_id);
+        $orderInfo['spec'] = $order->spec->name;
+        $orderInfo['price'] = $order->price;
+        $orderInfo['created_at'] = getStringFromDateTime($order->created_at);
+        $orderInfo['channel'] = $order->channel;
+        if ($order->store) {
+            $orderInfo['store_name'] = $order->store->name;
+        }
+
+        return $orderInfo;
+    }
+
+    /**
+     * 获取快递订单
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getExpressesApi(Request $request) {
+        return $this->getOrdersByDeliverApi($request, Order::DELIVER_EXPRESS);
+    }
+
+    /**
+     * 获取自提订单
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSelfsApi(Request $request) {
+        return $this->getOrdersByDeliverApi($request, Order::DELIVER_SELF);
+    }
+
+    /**
+     * 获取订单列表
+     * @param Request $request
+     * @param $deliveryMode
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function getOrdersByDeliverApi(Request $request, $deliveryMode) {
+        $query = $this->getBaseOrderQuery($request);
+
+        $orders = $query->where('channel', $deliveryMode)
+            ->get();
+
+        $result = [];
+        foreach ($orders as $order) {
+            $orderInfo = $this->getOrderInfoSimple($order);
+
+            // 添加拼团信息
+            $result[] = $orderInfo;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $result,
         ]);
     }
 }
