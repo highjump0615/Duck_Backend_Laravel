@@ -9,11 +9,10 @@
     <link rel="Bookmark" href="favicon.ico" >
     <link rel="Shortcut Icon" href="favicon.ico" />
     <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui/css/H-ui.min.css') ?>" />
-    <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/css/H-ui.admin.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/css/H-ui.admin.min.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?=asset('lib/Hui-iconfont/1.0.8/iconfont.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/skin/default/skin.css') ?>" id="skin" />
     <link rel="stylesheet" type="text/css" href="<?=asset('static/h-ui.admin/css/style.css') ?>" />
-    <link rel="stylesheet" href="<?=asset('lib/zTree/v3/css/zTreeStyle/zTreeStyle.css')?>" type="text/css">
 
     @yield('style')
 
@@ -26,12 +25,8 @@
 <!--_footer -->
 <script type="text/javascript" src="<?=asset('lib/jquery/1.9.1/jquery.min.js') ?>"></script>
 <script type="text/javascript" src="<?=asset('lib/layer/2.4/layer.js') ?>"></script>
-<script type="text/javascript" src="<?=asset('static/h-ui/js/H-ui.js') ?>"></script>
+<script type="text/javascript" src="<?=asset('static/h-ui/js/H-ui.min.js') ?>"></script>
 <script type="text/javascript" src="<?=asset('static/h-ui.admin/js/H-ui.admin.page.js') ?>"></script>
-<script type="text/javascript" src="<?=asset('lib/zTree/v3/js/jquery.ztree.all-3.5.min.js')?>"></script>
-<script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/jquery.validate.js')?>"></script>
-<script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/validate-methods.js')?>"></script>
-<script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/messages_zh.js')?>"></script>
 <script type="text/javascript" src="<?=asset('js/common.js')?>"></script>
 
 @yield('script')

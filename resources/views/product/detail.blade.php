@@ -213,6 +213,10 @@
 @endsection
 
 @section('script')
+    <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/jquery.validate.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/validate-methods.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/messages_zh.js')?>"></script>
+
     <script type="text/javascript" src="<?=asset('lib/webuploader/0.1.5/webuploader.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/ueditor.config.js')?>"></script>
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/ueditor.all.min.js')?>"></script>

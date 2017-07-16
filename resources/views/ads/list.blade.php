@@ -66,7 +66,6 @@
 
 @section('script')
 
-    <script type="text/javascript" src="<?=asset('lib/laypage/1.2/laypage.js')?>"></script>
     <script type="text/javascript">
 
         $(document).ready(function(){

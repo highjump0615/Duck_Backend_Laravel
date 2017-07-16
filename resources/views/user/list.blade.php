@@ -76,7 +76,6 @@
 
 @section('script')
     <script type="text/javascript" src="<?=asset('lib/datatables/1.10.0/jquery.dataTables.min.js') ?>"></script>
-    <script type="text/javascript" src="<?=asset('lib/laypage/1.2/laypage.js') ?>"></script>
     <script type="text/javascript">
         /*
          参数解释：
