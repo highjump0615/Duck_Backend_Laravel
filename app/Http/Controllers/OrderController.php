@@ -58,9 +58,10 @@ class OrderController extends Controller
         if($request->has('deliver_code')) {
             $order->deliver_code = $request->input('deliver_code');
             $order->status = Order::STATUS_SENT;
+
+            $order->save();
+            $order->addStatusHistory();
         }
-        
-        $order->save();
 
         return redirect()->to(url('/order')."/detail/".$id);
     }
@@ -72,13 +73,14 @@ class OrderController extends Controller
      */
     public function makeOrderApi(Request $request) {
         $nProductId = $request->input('product_id');
+        $nCount = $request->input('count');
         $product = Product::find($nProductId);
 
         // 获取参数
         $aryParam = [
             'customer_id'       => $request->input('customer_id'),
             'product_id'        => $nProductId,
-            'count'             => $request->input('count'),
+            'count'             => $nCount,
             'name'              => $request->input('name'),
             'phone'             => $request->input('phone'),
             'spec_id'           => $request->input('spec_id'),
@@ -122,6 +124,13 @@ class OrderController extends Controller
 
         // 添加订单状态历史
         $order->addStatusHistory();
+
+        // 查看拼团状况
+
+
+        // 减少库存
+        $product->remain -= $nCount;
+        $product->save();
 
         return response()->json([
             'status' => 'success',
@@ -263,6 +272,12 @@ class OrderController extends Controller
         $result['name'] = $order->name;
         $result['phone'] = $order->phone;
         $result['store'] = $order->store;
+        $result['deliver_code'] = $order->deliver_code;
+
+        // 拼团
+        if (!empty($order->groupBuy)) {
+            $result['groupbuy_persons'] = $order->groupBuy->getPeopleCount();
+        }
 
         return response()->json([
             'status' => 'success',

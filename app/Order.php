@@ -124,4 +124,24 @@ class Order extends Model
 
         OrderHistory::create($aryParam);
     }
+
+    /**
+     * 查看拼团是否成功
+     * @param $product
+     */
+    public function checkGroupBuy($product) {
+        $groupBuy = $this->groupBuy;
+
+        if (empty($groupBuy)) {
+            return;
+        }
+
+        if ($groupBuy->getPeopleCount() == $product->gb_count) {
+            foreach ($groupBuy->orders as $order) {
+                $order->status = Order::STATUS_INIT;
+                $order->save();
+                $order->addStatusHistory();
+            }
+        }
+    }
 }
