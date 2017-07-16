@@ -22,7 +22,7 @@ class CreateOrderTable extends Migration
             $table->string('name')->comment('姓名');
             $table->string('phone')->comment('手机号');
             $table->tinyInteger('channel')->comment('渠道 0:发货, 1：自提');
-            $table->unsignedInteger('store_id')->comment('门店');
+            $table->unsignedInteger('store_id')->nullable()->comment('门店');
             $table->string('desc')->nullable()->comment('备注');
             $table->string('address')->nullable()->comment('地址');
             $table->tinyInteger('pay_status')->comment('支付状态');

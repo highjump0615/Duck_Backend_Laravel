@@ -330,7 +330,7 @@ class ProductController extends Controller
         foreach ($groubBuys as $gb) {
             $gbInfo = [
                 'id' => $gb->id,
-                'persons' => $gb->persons,
+                'persons' => $gb->getPeopleCount(),
                 'time_remain' => $gb->getRemainTime(),
             ];
 

@@ -10,7 +10,7 @@ class Groupbuy extends Model
     protected $table="groupbuy";
 
     protected $fillable = [
-        'persons', 'end_at',
+        'end_at',
     ];
 
     /**
@@ -30,5 +30,13 @@ class Groupbuy extends Model
         $dateEnd = new DateTime($this->end_at);
 
         return $dateEnd->getTimestamp() - $dateCurrent->getTimestamp();
+    }
+
+    /**
+     * 获取人数
+     * @return mixed
+     */
+    public function getPeopleCount() {
+        return $this->orders()->count();
     }
 }

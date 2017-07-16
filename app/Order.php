@@ -11,7 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id', 'product_id', 'count', 'name', 'phone', 'channel', 'store_id', 'desc', 'address', 'pay_status',
-        'groupbuy_id', 'deliver_code', 'spec_id',
+        'groupbuy_id', 'deliver_code', 'spec_id', 'price', 'status'
     ];
 
     public $timestamps = true;
@@ -27,6 +27,9 @@ class Order extends Model
     const STATUS_SENT = 10;
     const STATUS_RECEIVED = 15;
     const STATUS_REFUNDED = 20;
+
+    const STATUS_PAY_PAID = 0;
+    const STATYS_PAY_REFUNDED = 1;
 
     public function getCustomerNameAttribute() {
         $c = Customer::find($this->customer_id);

@@ -34,3 +34,12 @@ function getStringFromDate($date) {
     return $date->format('Y-m-d');
 }
 
+/**
+ * DateTime转string
+ * @param $date DateTime
+ * @return mixed
+ */
+function getStringFromDateTime($date) {
+    return $date->format('Y-m-d H:i:s');
+}
+

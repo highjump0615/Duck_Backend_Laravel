@@ -13,14 +13,18 @@ class CustomerController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function setCustomerApi(Request $request) {
-        // 获取参数
-        $aryParam = [
-            'wechat_id' => $request->input('wechat_id'),
-            'name'      => $request->input('name'),
-            'image_url' => $request->input('photo_url'),
-        ];
+        $strWechatId = $request->input('wechat_id');
 
-        $customer = Customer::create($aryParam);
+        $customer = Customer::where('wechat_id', $strWechatId)->first();
+
+        if (empty($customer)) {
+            $customer = new Customer;
+            $customer->wechat_id = $strWechatId;
+        }
+
+        $customer->name = $request->input('name');
+        $customer->image_url = $request->input('photo_url');
+        $customer->save();
 
         return response()->json([
             'status' => 'success',

@@ -17,7 +17,6 @@ class CreateGroupBuyTable extends Migration
     {
         Schema::create(CreateGroupBuyTable::$tableName, function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('persons')->comment('人数');
             $table->dateTime('end_at')->comment('到期时间');
             $table->timestamps();
         });

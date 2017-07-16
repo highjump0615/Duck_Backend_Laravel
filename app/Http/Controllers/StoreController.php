@@ -72,4 +72,16 @@ class StoreController extends Controller
 
         $store->save();
     }
+
+    /**
+     * 获取门店API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getStoresApi(Request $request) {
+        return response()->json([
+            'status' => 'success',
+            'result' => Store::get(),
+        ]);
+    }
 }
