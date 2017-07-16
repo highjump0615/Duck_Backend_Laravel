@@ -241,4 +241,52 @@ class OrderController extends Controller
             'result' => $result,
         ]);
     }
+
+    /**
+     * 获取订单详情
+     * @param $orderId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getOrderDetailApi($orderId) {
+        $order = Order::with('product')
+            ->with('spec')
+            ->with('store')
+            ->find($orderId);
+
+        $result = $this->getOrderInfoSimple($order);
+
+        // 买家留言
+        $result['desc'] = $order->desc;
+
+        // 配送信息
+        $result['address'] = $order->address;
+        $result['name'] = $order->name;
+        $result['phone'] = $order->phone;
+        $result['store'] = $order->store;
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $result,
+        ]);
+    }
+
+    /**
+     * 确认接收API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function receiveProductApi(Request $request) {
+        $nOrderId = $request->input('order_id');
+        $order = Order::find($nOrderId);
+
+        $order->status = Order::STATUS_RECEIVED;
+        $order->save();
+
+        // 添加订单状态历史
+        $order->addStatusHistory();
+
+        return response()->json([
+            'status' => 'success',
+        ]);
+    }
 }

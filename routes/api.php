@@ -30,6 +30,8 @@ Route::group(['prefix'=>'/v1'], function() {
     Route::get('/orders/groupbuy', 'OrderController@getGroupbuysApi');
     Route::get('/orders/express', 'OrderController@getExpressesApi');
     Route::get('/orders/self', 'OrderController@getSelfsApi');
+    Route::get('/order/detail/{id}', 'OrderController@getOrderDetailApi');
+    Route::post('/order/receive', 'OrderController@receiveProductApi');
 
     Route::get('/system/info', 'SystemController@getInfoApi');
 });
