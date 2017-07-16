@@ -23,7 +23,7 @@
                             <thead>
                             <tr class="text-c">
                                 <th width="40">订单号</th>
-                                <th>产品</th>
+                                <th>商品</th>
                                 <th width="60">数量</th>
                                 <th width="100">规格</th>
                                 <th width="60">姓名</th>

@@ -21,36 +21,80 @@
         </nav>
         <div class="Hui-article">
             <article class="cl pd-20">
+                <form action="{{url('/stat')}}" method="get">
                 <div class="text-c">
                     <!-- 商品选择 -->
                     <span class="select-box inline">
-                    <select name="" class="select">
-                        <option value="0">全部商品</option>
-                        <option value="1">商品一</option>
-                        <option value="2">商品二</option>
+                    <select name="product" class="select">
+                        <option value="0"
+                                @if (!empty($product) && $product == 0) selected @endif>
+                            全部商品
+                        </option>
+                        @foreach ($products as $p)
+                        <option value="{{$p->id}}"
+                                @if (!empty($product) && $product == $p->id) selected @endif>
+                            {{$p->name}}
+                        </option>
+                        @endforeach
                     </select>
                     </span>
                     <!-- 日期范围 -->
                     &nbsp;&nbsp;&nbsp;&nbsp;日期范围：
-                    <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}'})" id="logmin" class="input-text Wdate" style="width:120px;">
+                    <input type="text"
+                           onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}'})"
+                           id="logmin"
+                           class="input-text Wdate"
+                           name="start_date"
+                           @if (!empty($start_date)) value="{{$start_date}}" @endif
+                           style="width:120px;">
                     -
-                    <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d'})" id="logmax" class="input-text Wdate" style="width:120px;">
+                    <input type="text"
+                           onfocus="WdatePicker({minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d'})"
+                           id="logmax"
+                           class="input-text Wdate"
+                           name="end_date"
+                           @if (!empty($end_date)) value="{{$end_date}}" @endif
+                           style="width:120px;">
                     <!-- 门店选择 -->
-                    <select data-placeholder="门店" class="chosen-select" style="width:250px"  multiple>
-                        <option value=""></option>
-                        <option value="1">门店1</option>
-                        <option value="2">门店2</option>
+                    <select name="store[]" data-placeholder="门店" class="chosen-select" style="width:250px"  multiple>
+                        @foreach ($stores as $s)
+                            <?php
+                            $bExist = false;
+                            foreach ($store as $sid) {
+                                if ($sid == $s->id) {
+                                    $bExist = true;
+                                    break;
+                                }
+                            }
+                            ?>
+                            <option value="{{$s->id}}"
+                                    @if ($bExist) selected @endif>
+                                {{$s->name}}
+                            </option>
+                        @endforeach
                     </select>
                     <!-- 渠道选择 -->
                     <span class="select-box inline">
-                    <select name="" class="select">
-                        <option value="0">全部渠道</option>
-                        <option value="1">发货</option>
-                        <option value="2">自提</option>
+                    <select name="channel" class="select">
+                        <option value="2"
+                                @if (!empty($channel) && $channel == 2) selected @endif>
+                            全部渠道
+                        </option>
+                        <option value="0"
+                                @if (!empty($channel) && $channel == 0) selected @endif>
+                            发货
+                        </option>
+                        <option value="1"
+                                @if (!empty($channel) && $channel == 1) selected @endif>
+                            自提
+                        </option>
                     </select>
                     </span>
-                    <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+                    <button class="btn btn-success" type="submit">
+                        <i class="Hui-iconfont">&#xe665;</i> 查询
+                    </button>
                 </div>
+                </form>
                 <div class="cl pd-5 bg-1 bk-gray mt-20">
 				<span class="l">
 				</span>
@@ -68,10 +112,10 @@
                         </thead>
                         <tbody>
                         <tr class="text-c">
-                            <td>2345</td>
-                            <td>4985.43</td>
-                            <td>209</td>
-                            <td>90</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
                         </tr>
                         </tbody>
                     </table>

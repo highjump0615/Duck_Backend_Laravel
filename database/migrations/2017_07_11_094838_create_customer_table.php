@@ -17,7 +17,7 @@ class CreateCustomerTable extends Migration
     {
         Schema::create(CreateCustomerTable::$tableName, function (Blueprint $table) {
             $table->increments('id');
-            $table->string('wechat_id');
+            $table->string('wechat_id')->unique();
             $table->string('name');
             $table->string('image_url')->nullable();
         });
