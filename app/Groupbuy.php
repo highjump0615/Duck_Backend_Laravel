@@ -4,6 +4,7 @@ namespace App;
 
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Groupbuy extends Model
 {
@@ -12,6 +13,8 @@ class Groupbuy extends Model
     protected $fillable = [
         'end_at',
     ];
+
+    use softDeletes;
 
     /**
      * 获取订单
