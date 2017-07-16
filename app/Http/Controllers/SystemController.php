@@ -45,4 +45,19 @@ class SystemController extends Controller
             'setting'=>$s,
         ]));
     }
+
+    /**
+     * 获取系统设置
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInfoApi(Request $request) {
+        $s = Setting::first();
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $s,
+        ]);
+    }
+
 }

@@ -27,4 +27,6 @@ Route::group(['prefix'=>'/v1'], function() {
     Route::get('/stores', 'StoreController@getStoresApi');
 
     Route::post('/order/make', 'OrderController@makeOrderApi');
+
+    Route::get('/system/info', 'SystemController@getInfoApi');
 });

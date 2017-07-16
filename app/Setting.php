@@ -10,6 +10,10 @@ class Setting extends Model
         'phone', 'notice_refund', 'notice_groupbuy',
     ];
 
+    protected $hidden = [
+        'id'
+    ];
+
     public $timestamps = false;
 
     protected $table = "settings";
