@@ -115,6 +115,9 @@ class OrderController extends Controller
 
         $order->save();
 
+        // 添加订单状态历史
+        $order->addStatusHistory();
+
         return response()->json([
             'status' => 'success',
         ]);

@@ -92,13 +92,19 @@
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">人数</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="{{$order->groupBuy->getPeopleCount()}}" class="input-text" readonly>
+                                            <input type="text"
+                                                   @if (!empty($order->groupBuy)) value="{{$order->groupBuy->getPeopleCount()}}" @endif
+                                                   class="input-text"
+                                                   readonly>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="form-label pull-left col-sm-4">倒计时</label>
                                         <div class="col-sm-8 pull-left">
-                                            <input type="text" value="{{$order->groupBuy->end_at}}" class="input-text" readonly>
+                                            <input type="text"
+                                                   @if (!empty($order->groupBuy)) value="{{$order->groupBuy->end_at}} @endif"
+                                                   class="input-text"
+                                                   readonly>
                                         </div>
                                     </div>
                                 </div>

@@ -85,7 +85,7 @@ class Order extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function groupBuy() {
-        return $this->belongsTo('App\Groupbuy');
+        return $this->belongsTo('App\Groupbuy', 'groupbuy_id');
     }
 
     /**
@@ -94,5 +94,17 @@ class Order extends Model
      */
     public function customer() {
         return $this->belongsTo('App\Model\Customer');
+    }
+
+    /**
+     * 添加订单状态历史
+     */
+    public function addStatusHistory() {
+        $aryParam = [
+            'order_id' => $this->id,
+            'status' => $this->status,
+        ];
+
+        OrderHistory::create($aryParam);
     }
 }
