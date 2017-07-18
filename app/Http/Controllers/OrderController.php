@@ -11,6 +11,8 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+require_once app_path() . "/lib/Wxpay/WxPay.Api.php";
+
 class OrderController extends Controller
 {
     public $menu = 'order';
@@ -64,6 +66,36 @@ class OrderController extends Controller
         }
 
         return redirect()->to(url('/order')."/detail/".$id);
+    }
+
+    /**
+     * 预支付处理
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function prepareOrderApi(Request $request) {
+        $nProductId = $request->input('product_id');
+        $dPrice = $request->input('price');
+
+        $product = Product::find($nProductId);
+
+        // 预支付
+        $worder = new \WxPayUnifiedOrder();
+
+        $worder->SetBody($product->name);
+        $worder->SetOut_trade_no(time() . uniqid() );
+        $worder->SetTotal_fee($dPrice);
+        $worder->SetNotify_url("http://paysdk.weixin.qq.com/example/notify.php");
+        $worder->SetTrade_type("JSAPI");
+
+        $worder->SetOpenid("oW1EN0bUef_n3bymxnFYFFGEeMF0");
+
+        $payOrder = \WxPayApi::unifiedOrder($worder);
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $payOrder,
+        ]);
     }
 
     /**
@@ -126,7 +158,7 @@ class OrderController extends Controller
         $order->addStatusHistory();
 
         // 查看拼团状况
-
+        $order->checkGroupBuy();
 
         // 减少库存
         $product->remain -= $nCount;

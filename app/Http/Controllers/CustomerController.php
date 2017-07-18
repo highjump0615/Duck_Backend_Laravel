@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\Customer;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -13,7 +14,26 @@ class CustomerController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function setCustomerApi(Request $request) {
-        $strWechatId = $request->input('wechat_id');
+        $strLoginCode = $request->input('loginCode');
+
+        // 先获取openid
+        $client = new Client();
+        $strUrl = "https://api.weixin.qq.com/sns/jscode2session"
+            . "?appid=" . env('WECHAT_APPID')
+            . "&secret=" . env('WECHAT_SECRET')
+            . "&grant_type=authorization_code"
+            . "&js_code=" . $strLoginCode;
+
+        $res = $client->request('GET', $strUrl)->getBody();
+
+        if (empty($res->open_id)) {
+            // 获取不到，失败
+            return response()->json([
+                'status' => 'fail',
+            ]);
+        }
+
+        $strWechatId = $res->open_id;
 
         $customer = Customer::where('wechat_id', $strWechatId)->first();
 

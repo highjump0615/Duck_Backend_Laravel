@@ -127,10 +127,10 @@ class Order extends Model
 
     /**
      * 查看拼团是否成功
-     * @param $product
      */
-    public function checkGroupBuy($product) {
+    public function checkGroupBuy() {
         $groupBuy = $this->groupBuy;
+        $product = $this->product;
 
         if (empty($groupBuy)) {
             return;
