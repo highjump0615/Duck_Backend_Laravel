@@ -26,6 +26,7 @@ Route::group(['prefix'=>'/v1'], function() {
 
     Route::get('/stores', 'StoreController@getStoresApi');
 
+    Route::post('/order/prepare', 'OrderController@prepareOrderApi');
     Route::post('/order/make', 'OrderController@makeOrderApi');
     Route::get('/orders/groupbuy', 'OrderController@getGroupbuysApi');
     Route::get('/orders/express', 'OrderController@getExpressesApi');
