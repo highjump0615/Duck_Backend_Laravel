@@ -228,12 +228,18 @@ class OrderController extends Controller
     private function getOrderInfoSimple(Order $order) {
         $orderInfo = [];
 
+        // 普通价格或拼团价格？
+        $dPrice = $order->product->price;
+        if (!empty($order->groupbuy_id)) {
+            $dPrice = $order->product->gb_price;
+        }
+
         $orderInfo['id'] = $order->id;
         $orderInfo['status_val'] = $order->status;
         $orderInfo['status'] = Order::getStatusName($order->status);
         $orderInfo['product_image'] = $order->product->getThumbnailUrl();
         $orderInfo['product_name'] = $order->product->name;
-        $orderInfo['product_price'] = $order->product->price;
+        $orderInfo['product_price'] = $dPrice;
         $orderInfo['deliver_cost'] = $order->product->deliver_cost;
         $orderInfo['count'] = $order->count;
         $orderInfo['is_groupbuy'] = !empty($order->groupbuy_id);
