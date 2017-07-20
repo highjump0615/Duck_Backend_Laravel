@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Groupbuy;
+use App\Model\Customer;
 use App\Order;
 use App\Product;
 use DateTime;
@@ -76,19 +77,21 @@ class OrderController extends Controller
     public function prepareOrderApi(Request $request) {
         $nProductId = $request->input('product_id');
         $dPrice = $request->input('price');
+        $nCustomerId = $request->input('customer_id');
 
         $product = Product::find($nProductId);
+        $customer = Customer::find($nCustomerId);
 
         // 预支付
         $worder = new \WxPayUnifiedOrder();
 
         $worder->SetBody($product->name);
         $worder->SetOut_trade_no(time() . uniqid() );
-        $worder->SetTotal_fee($dPrice);
+        $worder->SetTotal_fee(intval($dPrice * 100));
         $worder->SetNotify_url("http://paysdk.weixin.qq.com/example/notify.php");
         $worder->SetTrade_type("JSAPI");
 
-        $worder->SetOpenid("oW1EN0bUef_n3bymxnFYFFGEeMF0");
+        $worder->SetOpenid($customer->wechat_id);
 
         $payOrder = \WxPayApi::unifiedOrder($worder);
 
@@ -125,17 +128,21 @@ class OrderController extends Controller
 
         $order = Order::create($aryParam);
 
+        // 门店自提
         if ($request->has('store_id')) {
             $order->store_id = $request->input('store_id');
         }
+        // 快递
         if ($request->has('address')) {
             $order->address = $request->input('address');
+            $order->area = $request->input('area');
+            $order->zipcode = $request->input('zipcode');
         }
 
         // 拼团设置
         $nGroupBuy = intval($request->input('groupbuy_id'));
         if ($nGroupBuy > 0) {
-            $order->groupbuy_id = $request->input('address');
+            $order->groupbuy_id = $request->input('groupbuy_id');
             $order->status = Order::STATUS_GROUPBUY_WAITING;
         }
         else if ($nGroupBuy == 0) {
@@ -198,7 +205,7 @@ class OrderController extends Controller
         foreach ($orders as $order) {
             $orderInfo = $this->getOrderInfoSimple($order);
 
-            $orderInfo['groupbuy'][] = [
+            $orderInfo['groupbuy'] = [
                 'persons' => $order->groupBuy->getPeopleCount(),
                 'remain_time' => $order->groupBuy->getRemainTime(),
             ];
@@ -222,10 +229,12 @@ class OrderController extends Controller
         $orderInfo = [];
 
         $orderInfo['id'] = $order->id;
+        $orderInfo['status_val'] = $order->status;
         $orderInfo['status'] = Order::getStatusName($order->status);
         $orderInfo['product_image'] = $order->product->getThumbnailUrl();
         $orderInfo['product_name'] = $order->product->name;
         $orderInfo['product_price'] = $order->product->price;
+        $orderInfo['deliver_cost'] = $order->product->deliver_cost;
         $orderInfo['count'] = $order->count;
         $orderInfo['is_groupbuy'] = !empty($order->groupbuy_id);
         $orderInfo['spec'] = $order->spec->name;
@@ -266,7 +275,8 @@ class OrderController extends Controller
     private function getOrdersByDeliverApi(Request $request, $deliveryMode) {
         $query = $this->getBaseOrderQuery($request);
 
-        $orders = $query->where('channel', $deliveryMode)
+        $orders = $query->where('status', '>', Order::STATUS_GROUPBUY_WAITING)
+            ->where('channel', $deliveryMode)
             ->get();
 
         $result = [];
@@ -301,10 +311,13 @@ class OrderController extends Controller
 
         // 配送信息
         $result['address'] = $order->address;
+        $result['area'] = $order->area;
+        $result['zipcode'] = $order->zipcode;
         $result['name'] = $order->name;
         $result['phone'] = $order->phone;
         $result['store'] = $order->store;
-        $result['deliver_code'] = $order->deliver_code;
+        $result['deliver_code'] = getEmptyString($order->deliver_code);
+        $result['deliver_cost'] = $order->product->deliver_cost;
 
         // 拼团
         if (!empty($order->groupBuy)) {

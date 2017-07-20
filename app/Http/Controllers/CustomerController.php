@@ -14,7 +14,7 @@ class CustomerController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function setCustomerApi(Request $request) {
-        $strLoginCode = $request->input('loginCode');
+        $strLoginCode = $request->input('login_code');
 
         // 先获取openid
         $client = new Client();
@@ -25,15 +25,17 @@ class CustomerController extends Controller
             . "&js_code=" . $strLoginCode;
 
         $res = $client->request('GET', $strUrl)->getBody();
+        $jsonRes = json_decode($res);
 
-        if (empty($res->open_id)) {
+        if (empty($jsonRes->openid)) {
             // 获取不到，失败
             return response()->json([
                 'status' => 'fail',
+                'result' => $jsonRes
             ]);
         }
 
-        $strWechatId = $res->open_id;
+        $strWechatId = $jsonRes->openid;
 
         $customer = Customer::where('wechat_id', $strWechatId)->first();
 

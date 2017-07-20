@@ -47,10 +47,10 @@ class GroupbuyTimeoutCron extends Command
         $dateNow = new DateTime("now");
 
         Order::whereHas('groupbuy', function ($query) use ($dateNow) {
-            $query->whereDate('end_at', '>', $dateNow);
+            $query->where('end_at', '<=', $dateNow);
         })->delete();
 
-        Groupbuy::whereDate('end_at', '>', $dateNow)->delete();
+        Groupbuy::where('end_at', '<=', $dateNow)->delete();
 
         $this->info("Giveup Cron is working: " . getStringFromDateTime($dateNow));
 

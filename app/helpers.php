@@ -43,3 +43,10 @@ function getStringFromDateTime($date) {
     return $date->format('Y-m-d H:i:s');
 }
 
+/**
+ * @param $value
+ * @return string
+ */
+function getEmptyString($value) {
+    return !empty($value) ? $value : '';
+}

@@ -299,6 +299,7 @@ class ProductController extends Controller
         })->get();
 
         $result = [
+            'id'                => $product->id,
             'name'              => $product->name,
             'thumbnail'         => $product->getThumbnailUrl(),
             'price'             => $product->price,
