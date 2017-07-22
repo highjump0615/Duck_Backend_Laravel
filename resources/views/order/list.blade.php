@@ -1,5 +1,9 @@
 @extends('layout.master')
 
+@section('style')
+    <link rel="stylesheet" type="text/css" href="<?=asset('css/pagination.css') ?>" />
+@endsection
+
 @section('content')
 
     @include('layout.header')
@@ -14,7 +18,7 @@
         </nav>
         <div class="Hui-article">
 
-            <form action="{{url('/stat')}}" method="get">
+            <form action="{{url('/')}}" method="get">
                 <div class="filter-nav text-c">
                     <div class="fields-div">
                         <div>
@@ -37,7 +41,8 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;商品：
                             <input type="text"
                                    class="input-text"
-                                   name="product">
+                                   name="product"
+                                   @if (!empty($product)) value="{{$product}}" @endif>
                             <!-- 渠道选择 -->
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <span class="select-box inline">
@@ -46,29 +51,29 @@
                                         @if (!empty($channel) && $channel == 2) selected @endif>
                                     全部渠道
                                 </option>
-                                <option value="0"
-                                        @if (!empty($channel) && $channel == 0) selected @endif>
+                                <option value="{{\App\Order::DELIVER_EXPRESS}}"
+                                        @if (!empty($channel) && $channel == \App\Order::DELIVER_EXPRESS) selected @endif>
                                     发货
                                 </option>
-                                <option value="1"
-                                        @if (!empty($channel) && $channel == 1) selected @endif>
+                                <option value="{{\App\Order::DELIVER_SELF}}"
+                                        @if (!empty($channel) && $channel == \App\Order::DELIVER_SELF) selected @endif>
                                     自提
                                 </option>
                             </select>
                             </span>
                             <!-- 是否拼团选择 -->
                             <span class="select-box inline">
-                            <select name="channel" class="select">
-                                <option value="2"
-                                        @if (!empty($channel) && $channel == 2) selected @endif>
+                            <select name="groupbuy" class="select">
+                                <option value="0"
+                                        @if (!empty($groupbuy) && $groupbuy == 0) selected @endif>
                                     是否拼团
                                 </option>
-                                <option value="0"
-                                        @if (!empty($channel) && $channel == 0) selected @endif>
+                                <option value="1"
+                                        @if (!empty($groupbuy) && $groupbuy == 1) selected @endif>
                                     拼团
                                 </option>
-                                <option value="1"
-                                        @if (!empty($channel) && $channel == 1) selected @endif>
+                                <option value="2"
+                                        @if (!empty($groupbuy) && $groupbuy == 2) selected @endif>
                                     非拼团
                                 </option>
                             </select>
@@ -79,35 +84,36 @@
                             <label for="store">门店：</label>
                             <input type="text"
                                    class="input-text"
-                                   name="store">
+                                   name="store"
+                                   @if (!empty($store)) value="{{$store}}" @endif>
                             <!-- 用户名 -->
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <label for="name">用户名：</label>
                             <input type="text"
                                    class="input-text"
-                                   name="name">
+                                   name="name"
+                                   @if (!empty($name)) value="{{$name}}" @endif>
                             <!-- 手机号 -->
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <label for="phone">手机号：</label>
                             <input type="text"
                                    class="input-text"
-                                   name="phone">
+                                   name="phone"
+                                   @if (!empty($phone)) value="{{$phone}}" @endif>
                             <!-- 订单状态 -->
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <span class="select-box inline">
-                            <select name="channel" class="select">
-                                <option value="2"
-                                        @if (!empty($channel) && $channel == 2) selected @endif>
+                            <select name="status" class="select">
+                                <option value="0"
+                                        @if (!empty($status) && $status == 0) selected @endif>
                                     全部状态
                                 </option>
-                                <option value="0"
-                                        @if (!empty($channel) && $channel == 0) selected @endif>
-                                    发货
+                                @foreach (\App\Order::$STATUS_LIST as $st)
+                                <option value="{{$st}}"
+                                        @if (!empty($status) && $status == $st) selected @endif>
+                                    {{\App\Order::getStatusName($st, \App\Order::DELIVER_EXPRESS)}}
                                 </option>
-                                <option value="1"
-                                        @if (!empty($channel) && $channel == 1) selected @endif>
-                                    自提
-                                </option>
+                                @endforeach
                             </select>
                             </span>
                         </div>
@@ -165,6 +171,9 @@
                             @endforeach
                             </tbody>
                         </table>
+
+                        <ul id="pagination_data" class="pagination-sm pull-right"></ul>
+
                     </div>
                 </div>
             </div>
@@ -173,16 +182,24 @@
 @endsection
 
 @section('script')
+
 <!--请在下方写此页面业务相关的脚本-->
-<script type="text/javascript" src="<?=asset('lib/datatables/1.10.0/jquery.dataTables.min.js') ?>"></script>
 <script type="text/javascript">
+
+    // 全局变量
+    var gnTotalPage = '{{$orders->lastPage()}}';
+    var gnCurrentPage = '{{$orders->currentPage()}}';
+
+    gnTotalPage = parseInt(gnTotalPage);
+    gnCurrentPage = parseInt(gnCurrentPage);
 
     $(document).ready(function(){
     });
 
-    $('.table-sort').dataTable({
-        'ordering': false
-    });
-
 </script>
+
+<script type="text/javascript" src="<?=asset('lib/My97DatePicker/4.8/WdatePicker.js') ?>"></script>
+<script type="text/javascript" src="<?=asset('/lib/pagination/jquery.twbsPagination.min.js')?>"></script>
+<script type="text/javascript" src="<?=asset('/js/pagination.js')?>"></script>
+
 @endsection

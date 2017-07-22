@@ -14,3 +14,7 @@
     display: inline-block;
     margin-right: 20px;
 }
+
+.pull-right {
+    float: right;
+}
