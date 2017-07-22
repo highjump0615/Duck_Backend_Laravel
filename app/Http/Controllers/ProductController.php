@@ -221,6 +221,15 @@ class ProductController extends Controller
     }
 
     /**
+     * 删除规格
+     * @param Request $request
+     */
+    public function deleteRule(Request $request) {
+        $rid = $request->input('id');
+        Spec::find($rid)->delete();
+    }
+
+    /**
      * 上传图片
      * @param Request $request
      * @return string

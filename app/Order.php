@@ -133,7 +133,7 @@ class Order extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function spec() {
-        return $this->belongsTo('App\Spec');
+        return $this->belongsTo('App\Spec')->withTrashed();
     }
 
     /**
