@@ -16,6 +16,8 @@ class CreateImagesTable extends Migration
     public function up()
     {
         Schema::create(CreateImagesTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->unsignedInteger('product_id')->comment('产品');
             $table->string('url')->comment('图片路径');

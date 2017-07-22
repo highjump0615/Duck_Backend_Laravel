@@ -16,6 +16,8 @@ class CreateProductTable extends Migration
     public function up()
     {
         Schema::create(CreateProductTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->string('name')->comment('名称');
             $table->unsignedInteger('category_id')->comment('分类');

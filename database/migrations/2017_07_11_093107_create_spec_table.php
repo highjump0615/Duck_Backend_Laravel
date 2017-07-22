@@ -16,6 +16,8 @@ class CreateSpecTable extends Migration
     public function up()
     {
         Schema::create(CreateSpecTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->string('name')->comment('名称');
         });

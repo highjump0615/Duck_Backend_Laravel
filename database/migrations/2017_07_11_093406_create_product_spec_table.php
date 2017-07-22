@@ -16,6 +16,8 @@ class CreateProductSpecTable extends Migration
     public function up()
     {
         Schema::create(CreateProductSpecTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->unsignedInteger('product_id')->comment('产品');
             $table->unsignedInteger('spec_id')->comment('规格');

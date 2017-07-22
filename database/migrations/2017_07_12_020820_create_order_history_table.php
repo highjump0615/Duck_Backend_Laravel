@@ -16,6 +16,8 @@ class CreateOrderHistoryTable extends Migration
     public function up()
     {
         Schema::create(CreateOrderHistoryTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->unsignedInteger('order_id')->comment('订单');
             $table->tinyInteger('status')->comment('状态');

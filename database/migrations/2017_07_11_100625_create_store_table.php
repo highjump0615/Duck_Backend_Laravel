@@ -16,6 +16,8 @@ class CreateStoreTable extends Migration
     public function up()
     {
         Schema::create(CreateStoreTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->string('name')->comment('名称');
             $table->string('address')->comment('地址');
