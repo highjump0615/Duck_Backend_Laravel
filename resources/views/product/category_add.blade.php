@@ -23,12 +23,15 @@
                 </div>
                 <div class="col-5"> </div>
             </div>
-            <div class="row cl">
-                <div class="col-9 col-offset-2">
-                    <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
-                </div>
-            </div>
         </form>
+
+        <div class="row cl mt-20">
+            <div class="col-5 text-c">
+                <button id="but-submit" class="btn btn-primary radius">&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                <button id="but-delete" class="btn radius ml-15">&nbsp;&nbsp;删除&nbsp;&nbsp;</button>
+            </div>
+        </div>
+
     </div>
 
 @endsection
@@ -36,21 +39,59 @@
 @section('script')
 
     <script>
-        $('#form-category-add').submit(function (e) {
-            e.preventDefault();
+        $(document).ready(function() {
+            var objForm = $("#form-category-add");
 
-            // 提交
-            $.ajax({
-                type: 'POST',
-                url: '{{url("/category")}}',
-                data: $(this).serializeArray(),
-                success: function (data) {
-                    parent.location.reload();
+            objForm.submit(function (e) {
+                e.preventDefault();
+
+                // 提交
+                $.ajax({
+                    type: 'POST',
+                    url: '{{url("/category")}}',
+                    data: $(this).serializeArray(),
+                    success: function (data) {
+                        parent.location.reload();
 //                    console.log(data);
-                },
-                error: function (data) {
-                    console.log(data);
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                });
+            });
+
+            $("#but-delete").click(function (e) {
+                e.preventDefault();
+
+                @if (!empty($category))
+                layer.confirm('确认要删除吗？', {shade: false}, function(){
+                    // 提交
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{url('/category')}}',
+                        data: {
+                            'id': '{{$category->id}}',
+                            "_token": '{{ csrf_token() }}'
+                        },
+                        success: function (data) {
+                            parent.location.reload();
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
+                });
+                @endif
+            });
+
+            $("#but-submit").click(function (e) {
+                // 检查名称有内容
+                if ($('input[name="name"]').val().length <= 0) {
+                    layer.msg('请输入名称');
+                    return;
                 }
+
+                objForm.submit();
             });
         });
     </script>

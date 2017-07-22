@@ -202,10 +202,22 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * 删除商品
+     * @param Request $request
+     */
     public function deleteProduct(Request $request) {
         $pid = $request->input('product_id');
-        $p = Product::find($pid);
-        $p->delete();
+        Product::find($pid)->delete();
+    }
+
+    /**
+     * 删除分类
+     * @param Request $request
+     */
+    public function deleteCategory(Request $request) {
+        $cid = $request->input('id');
+        Category::find($cid)->delete();
     }
 
     /**
