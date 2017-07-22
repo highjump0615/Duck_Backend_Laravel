@@ -116,6 +116,12 @@
                                 </div>
                             </div>
                             <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-2">买家留言：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" value="{{$order->desc}}" class="input-text" readonly>
+                                </div>
+                            </div>
+                            <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">订单状态：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
                                     <input type="text" value="{{\App\Order::getStatusName($order->status, $order->channel)}}" class="input-text" readonly>

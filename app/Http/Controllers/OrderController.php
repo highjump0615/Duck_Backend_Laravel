@@ -56,8 +56,10 @@ class OrderController extends Controller
 
         // 配送渠道
         $channel = $request->input('channel');
-        if ($channel == Order::DELIVER_EXPRESS || $channel == Order::DELIVER_SELF) {
-            $queryOrder->where('channel', $channel);
+        if ($channel != null) {
+            if ($channel == Order::DELIVER_EXPRESS || $channel == Order::DELIVER_SELF) {
+                $queryOrder->where('channel', $channel);
+            }
         }
 
         // 是否拼团
@@ -133,16 +135,28 @@ class OrderController extends Controller
             'order'=>$order
         ]));
     }
-    
+
+    /**
+     * 输入快递单号设置发货状态
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateOrder(Request $request, $id) {
         $order = Order::find($id);
-        
-        if($request->has('deliver_code')) {
-            $order->deliver_code = $request->input('deliver_code');
-            $order->status = Order::STATUS_SENT;
+
+        if ($order->status == Order::STATUS_INIT || $order->status == Order::STATUS_SENT) {
+            if ($request->has('deliver_code')) {
+                $order->deliver_code = $request->input('deliver_code');
+            }
+
+            // 状态历史只有变活的时候才添加
+            if ($order->status == Order::STATUS_INIT) {
+                $order->status = Order::STATUS_SENT;
+                $order->addStatusHistory();
+            }
 
             $order->save();
-            $order->addStatusHistory();
         }
 
         return redirect()->to(url('/order')."/detail/".$id);
@@ -189,6 +203,7 @@ class OrderController extends Controller
         $nProductId = $request->input('product_id');
         $nCount = $request->input('count');
         $product = Product::find($nProductId);
+        $nChannel = $request->input('channel');
 
         $order = new Order();
 
@@ -199,7 +214,7 @@ class OrderController extends Controller
         $order->name            = $request->input('name');
         $order->phone           = $request->input('phone');
         $order->spec_id         = $request->input('spec_id');
-        $order->channel         = $request->input('channel');
+        $order->channel         = $nChannel;
         $order->desc            = $request->input('desc');
         $order->price           = $request->input('price');
         $order->pay_status      = Order::STATUS_PAY_PAID;
@@ -247,6 +262,28 @@ class OrderController extends Controller
 
         $order->save();
 
+        //
+        // 生成订单编号
+        //
+        $dateCurrent = new DateTime("now");
+        $strNumber = "p";
+        if ($nGroupBuy < 0) {
+            $strNumber = "l";
+        }
+        if ($nChannel == Order::DELIVER_EXPRESS) {
+            $strNumber .= "k";
+        }
+        else {
+            $strNumber .= "z";
+        }
+
+        $strNumber .= $dateCurrent->format('ymdHis');
+        $strNumber .= intToString($nProductId, 3);
+        $strNumber .= intToString($order->id, 4);
+
+        $order->number = $strNumber;
+        $order->save();
+
         // 添加订单状态历史
         $order->addStatusHistory();
 
@@ -256,6 +293,7 @@ class OrderController extends Controller
         // 减少库存
         $product->remain -= $nCount;
         $product->save();
+
 
         return response()->json([
             'status' => 'success',
