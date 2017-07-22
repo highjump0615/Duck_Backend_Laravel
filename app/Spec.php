@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Spec extends Model
 {
@@ -11,5 +12,7 @@ class Spec extends Model
     ];
 
     public $timestamps = false;
+    use softDeletes;
+
     protected $table = 'specs';
 }

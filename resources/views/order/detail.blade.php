@@ -26,7 +26,7 @@
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">订单号：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" value="{{$order->id}}" class="input-text" readonly>
+                                    <input type="text" value="{{$order->number}}" class="input-text" readonly>
                                 </div>
                             </div>
                             <div class="row cl">

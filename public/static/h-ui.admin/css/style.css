@@ -1,6 +1,7 @@
 @charset "utf-8";
 /* 你自己的样式 */
 
+/* 订单列表 筛选字段 */
 .filter-nav {
     padding-top: 20px;
 }
@@ -18,3 +19,5 @@
 .pull-right {
     float: right;
 }
+
+/* layer 样式 */

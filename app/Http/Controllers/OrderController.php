@@ -360,6 +360,7 @@ class OrderController extends Controller
         }
 
         $orderInfo['id'] = $order->id;
+        $orderInfo['number'] = $order->number;
         $orderInfo['status_val'] = $order->status;
         $orderInfo['status'] = Order::getStatusName($order->status, $order->channel);
         $orderInfo['product_image'] = $order->product->getThumbnailUrl();

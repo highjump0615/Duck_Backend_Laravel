@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
@@ -14,6 +15,8 @@ class Product extends Model
     protected $appends = [];
 
     public $timestamps = true;
+    use softDeletes;
+
     public $table = 'product';
 
     /**
@@ -21,7 +24,7 @@ class Product extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function category() {
-        return $this->belongsTo('App\Category');
+        return $this->belongsTo('App\Category')->withTrashed();
     }
 
     public function hasSpec($spec_id) {
