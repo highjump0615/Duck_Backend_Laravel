@@ -22,6 +22,7 @@ class Order extends Model
     ];
 
     const STATUS_GROUPBUY_WAITING = 1;
+    const STATUS_GROUPBUY_CANCELLED = 2;
     const STATUS_INIT = 5;
     const STATUS_SENT = 10;
     const STATUS_RECEIVED = 15;
@@ -50,16 +51,33 @@ class Order extends Model
      * @param $status
      * @return string
      */
-    public static function getStatusName($status) {
+    public static function getStatusName($status, $channel) {
         switch($status) {
             case Order::STATUS_GROUPBUY_WAITING:
                 return "拼团中";
+            case Order::STATUS_GROUPBUY_CANCELLED:
+                return "已取消";
             case Order::STATUS_INIT:
-                return "待发货";
+                if ($channel == Order::DELIVER_EXPRESS) {
+                    return "待发货";
+                }
+                else {
+                    return "待提货";
+                }
             case Order::STATUS_SENT:
-                return "待收货";
+                if ($channel == Order::DELIVER_EXPRESS) {
+                    return "待收货";
+                }
+                else {
+                    return "待提货";
+                }
             case Order::STATUS_RECEIVED:
-                return "已收货";
+                if ($channel == Order::DELIVER_EXPRESS) {
+                    return "已收货";
+                }
+                else {
+                    return "已提货";
+                }
             case Order::STATUS_REFUNDED:
                 return "已退款";
         }
@@ -78,7 +96,7 @@ class Order extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function groupBuy() {
-        return $this->belongsTo('App\Groupbuy', 'groupbuy_id');
+        return $this->belongsTo('App\Groupbuy', 'groupbuy_id')->withTrashed();
     }
 
     /**
@@ -142,6 +160,8 @@ class Order extends Model
                 $order->save();
                 $order->addStatusHistory();
             }
+
+            $groupBuy->delete();
         }
     }
 }

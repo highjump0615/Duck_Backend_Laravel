@@ -118,7 +118,7 @@
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">订单状态：</label>
                                 <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" value="{{\App\Order::getStatusName($order->status)}}" class="input-text" readonly>
+                                    <input type="text" value="{{\App\Order::getStatusName($order->status, $order->channel)}}" class="input-text" readonly>
                                 </div>
                             </div>
                             <div class="row cl">
@@ -154,7 +154,7 @@
                             <tr class="text-c va-m">
                                 <td>{{$no}}</td>
                                 <td>{{$h->created_at}}</td>
-                                <td>{{$h->status_str}}</td>
+                                <td>{{\App\Order::getStatusName($h->status, $order->channel)}}</td>
                             </tr>
                             @endforeach
                             </tbody>
