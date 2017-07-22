@@ -6,11 +6,17 @@
             padding-right: 10px;
         }
 
+        .prod-spec > label a {
+            text-decoration: none;
+            visibility: hidden;
+        }
+
         .add-spec {
             margin-top: 10px;
         }
     </style>
     <link href="<?=asset('lib/webuploader/0.1.5/webuploader.css')?>" rel="stylesheet" type="text/css"/>
+
 @endsection
 @section('content')
 
@@ -81,6 +87,7 @@
                                         <input type="checkbox" value="1" name="spec{{$s->id}}" />
                                     @endif
                                     {{$s->name}}
+                                    <a data-spec="{{$s->id}}"><i class="Hui-iconfont">&#xe6a6;</i></a>
                                 </label>
                             @endforeach
                         </div>
@@ -269,6 +276,41 @@
 
             $("#imgInp").change(function () {
                 readURL(this);
+            });
+
+            //
+            // 删除规格
+            //
+            $('.prod-spec > label').hover(function() {
+                $(this).find('a').css('visibility', 'visible');
+            }, function() {
+                $(this).find('a').css('visibility', 'hidden');
+            });
+
+            $('.prod-spec > label a').click(function(e) {
+                e.preventDefault();
+
+                var nSpecId = $(this).data('spec');
+                var objSpec = $(this).parent();
+
+                layer.confirm('确定删除此规格吗？', function(index) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{url('/rule')}}',
+                        data: {
+                            'id': nSpecId,
+                            "_token": '{{ csrf_token() }}'
+                        },
+                        success: function (data) {
+                            // 删除该规格
+                            objSpec.remove();
+                            layer.close(index);
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
+                });
             });
 
             var objForm = $("#form-product");

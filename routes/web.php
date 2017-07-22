@@ -35,8 +35,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/product/uploadImage', 'ProductController@uploadImage');
     Route::delete('/product', 'ProductController@deleteProduct');
 
+    // 规格
     Route::post('/rule', 'ProductController@addRule');
-    
+    Route::delete('/rule', 'ProductController@deleteRule');
+
 
 	// 订单管理
     Route::get('/', 'OrderController@getOrderList');
