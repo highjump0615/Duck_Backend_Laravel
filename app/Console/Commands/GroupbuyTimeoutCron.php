@@ -48,7 +48,7 @@ class GroupbuyTimeoutCron extends Command
 
         Order::whereHas('groupbuy', function ($query) use ($dateNow) {
             $query->where('end_at', '<=', $dateNow);
-        })->delete();
+        })->update(['status' => Order::STATUS_GROUPBUY_CANCELLED]);
 
         Groupbuy::where('end_at', '<=', $dateNow)->delete();
 

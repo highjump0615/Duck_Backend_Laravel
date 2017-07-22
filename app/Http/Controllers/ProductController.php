@@ -288,13 +288,16 @@ class ProductController extends Controller
      * @param $productId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getProductDetailApi($productId) {
+    public function getProductDetailApi(Request $request, $productId) {
+        $customerId =  $request->input('cusomter_id');
+
         $product = Product::with('images')
             ->with('specs')
             ->find($productId);
 
-        // 获取拼团
-        $groubBuys = Groupbuy::whereHas('orders', function($query) use ($productId) {
+        // 获取拼团, 自己开启的除外
+        $groubBuys = Groupbuy::whereHas('orders', function($query) use ($productId, $customerId) {
+            $query->where('customer_id', '!=', $customerId);
             $query->where('product_id', $productId);
         })->get();
 

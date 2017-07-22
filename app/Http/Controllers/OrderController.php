@@ -37,7 +37,7 @@ class OrderController extends Controller
 
         return view('order.list', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
-            'orders'=>$orders,
+            'orders'=> $orders,
         ]));
     }
 
@@ -111,22 +111,20 @@ class OrderController extends Controller
         $nCount = $request->input('count');
         $product = Product::find($nProductId);
 
-        // 获取参数
-        $aryParam = [
-            'customer_id'       => $request->input('customer_id'),
-            'product_id'        => $nProductId,
-            'count'             => $nCount,
-            'name'              => $request->input('name'),
-            'phone'             => $request->input('phone'),
-            'spec_id'           => $request->input('spec_id'),
-            'channel'           => $request->input('channel'),
-            'desc'              => $request->input('desc'),
-            'price'             => $request->input('price'),
-            'pay_status'        => Order::STATUS_PAY_PAID,
-            'status'            => Order::STATUS_INIT,
-        ];
+        $order = new Order();
 
-        $order = Order::create($aryParam);
+        // 设置基础参数
+        $order->customer_id     = $request->input('customer_id');
+        $order->product_id      = $nProductId;
+        $order->count           = $nCount;
+        $order->name            = $request->input('name');
+        $order->phone           = $request->input('phone');
+        $order->spec_id         = $request->input('spec_id');
+        $order->channel         = $request->input('channel');
+        $order->desc            = $request->input('desc');
+        $order->price           = $request->input('price');
+        $order->pay_status      = Order::STATUS_PAY_PAID;
+        $order->status          = Order::STATUS_INIT;
 
         // 门店自提
         if ($request->has('store_id')) {
@@ -142,6 +140,15 @@ class OrderController extends Controller
         // 拼团设置
         $nGroupBuy = intval($request->input('groupbuy_id'));
         if ($nGroupBuy > 0) {
+            // 拼团已无效
+            $group = Groupbuy::find($nGroupBuy);
+            if (empty($group)) {
+                return response()->json([
+                    'status' => 'fail',
+                    'message' => '此拼团已无效'
+                ]);
+            }
+
             $order->groupbuy_id = $request->input('groupbuy_id');
             $order->status = Order::STATUS_GROUPBUY_WAITING;
         }
@@ -236,7 +243,7 @@ class OrderController extends Controller
 
         $orderInfo['id'] = $order->id;
         $orderInfo['status_val'] = $order->status;
-        $orderInfo['status'] = Order::getStatusName($order->status);
+        $orderInfo['status'] = Order::getStatusName($order->status, $order->channel);
         $orderInfo['product_image'] = $order->product->getThumbnailUrl();
         $orderInfo['product_name'] = $order->product->name;
         $orderInfo['product_price'] = $dPrice;
