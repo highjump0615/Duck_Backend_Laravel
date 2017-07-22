@@ -1,3 +1,16 @@
 @charset "utf-8";
 /* 你自己的样式 */
 
+.filter-nav {
+    padding-top: 20px;
+}
+.filter-nav .input-text {
+    width: 120px;
+}
+.filter-nav .newline {
+    margin-top: 10px;
+}
+.filter-nav .fields-div {
+    display: inline-block;
+    margin-right: 20px;
+}
