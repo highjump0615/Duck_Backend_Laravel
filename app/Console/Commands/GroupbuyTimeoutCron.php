@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Groupbuy;
 use App\Order;
+use App\Product;
 use DateTime;
-use function foo\func;
 use Illuminate\Console\Command;
 
 class GroupbuyTimeoutCron extends Command
@@ -46,10 +46,24 @@ class GroupbuyTimeoutCron extends Command
         //
         $dateNow = new DateTime("now");
 
-        Order::whereHas('groupbuy', function ($query) use ($dateNow) {
-            $query->where('end_at', '<=', $dateNow);
-        })->update(['status' => Order::STATUS_GROUPBUY_CANCELLED]);
+        $orders = Order::with('product')
+            ->whereHas('groupbuy', function ($query) use ($dateNow) {
+                $query->where('end_at', '<=', $dateNow);
+            })
+            ->get();
 
+        foreach ($orders as $o) {
+            // 恢复商品数量
+            $o->product->remain += $o->count;
+            $o->product->save();
+
+            // 状态设置为失败
+            $o->status = Order::STATUS_GROUPBUY_CANCELLED;
+            $o->addStatusHistory();
+            $o->save();
+        }
+
+        // 删除过期的 groupbuy
         Groupbuy::where('end_at', '<=', $dateNow)->delete();
 
         $this->info("Giveup Cron is working: " . getStringFromDateTime($dateNow));

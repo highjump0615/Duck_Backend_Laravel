@@ -180,6 +180,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'result' => $order->id
         ]);
     }
 
@@ -288,7 +289,7 @@ class OrderController extends Controller
     private function getOrdersByDeliverApi(Request $request, $deliveryMode) {
         $query = $this->getBaseOrderQuery($request);
 
-        $orders = $query->where('status', '>', Order::STATUS_GROUPBUY_WAITING)
+        $orders = $query->where('status', '>=', Order::STATUS_INIT)
             ->where('channel', $deliveryMode)
             ->get();
 
