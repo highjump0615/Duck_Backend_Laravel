@@ -11,7 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id', 'product_id', 'count', 'name', 'phone', 'channel', 'store_id', 'desc', 'address', 'pay_status',
-        'groupbuy_id', 'deliver_code', 'spec_id', 'price', 'status'
+        'groupbuy_id', 'deliver_code', 'spec_id', 'price', 'status', 'number'
     ];
 
     public $timestamps = true;

@@ -135,22 +135,22 @@
                         <table class="table table-border table-bordered table-bg table-hover table-sort">
                             <thead>
                             <tr class="text-c">
-                                <th width="40">订单号</th>
+                                <th>订单号</th>
                                 <th>商品</th>
-                                <th width="60">数量</th>
-                                <th width="100">规格</th>
-                                <th width="60">姓名</th>
-                                <th width="100">手机号</th>
-                                <th width="100">配送方式</th>
-                                <th width="100">金额</th>
-                                <th width="100">订单状态</th>
-                                <th width="100">操作</th>
+                                <th>数量</th>
+                                <th>规格</th>
+                                <th>姓名</th>
+                                <th>手机号</th>
+                                <th>配送方式</th>
+                                <th>金额</th>
+                                <th>订单状态</th>
+                                <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($orders as $o)
                             <tr class="text-c va-m">
-                                <td>{{$o->id}}</td>
+                                <td>{{$o->number}}</td>
                                 <td>{{$o->product->name}}</td>
                                 <td class="text-l">{{$o->count}}</td>
                                 <td class="text-l">{{$o->spec->name}}</td>
