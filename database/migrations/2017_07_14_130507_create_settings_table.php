@@ -15,6 +15,8 @@ class CreateSettingsTable extends Migration
     public function up()
     {
         Schema::create(CreateSettingsTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->text('phone')->nullable();
             $table->text('notice_refund')->nullable();

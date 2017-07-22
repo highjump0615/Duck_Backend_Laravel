@@ -15,6 +15,8 @@ class CreateAdsTable extends Migration
     public function up()
     {
         Schema::create(CreateAdsTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->unsignedInteger('product_id')->comment('商品');
             $table->text('image_url')->nullable();

@@ -16,6 +16,8 @@ class CreateGroupBuyTable extends Migration
     public function up()
     {
         Schema::create(CreateGroupBuyTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->dateTime('end_at')->comment('到期时间');
             $table->timestamps();
