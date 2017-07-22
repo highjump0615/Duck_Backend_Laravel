@@ -45,7 +45,7 @@
                                 <td class="text-l">{{$o->phone}}</td>
                                 <td class="text-l">{{$o->getDeliveryName()}}</td>
                                 <td><span class="price">{{$o->price}}</span> 元</td>
-                                <td class="td-status">{{\App\Order::getStatusName($o->status, $order->channel)}}</td>
+                                <td class="td-status">{{\App\Order::getStatusName($o->status, $o->channel)}}</td>
                                 <td class="td-manage">
                                     <a style="text-decoration:none"
                                        class="ml-5"
