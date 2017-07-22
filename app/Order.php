@@ -28,6 +28,19 @@ class Order extends Model
     const STATUS_RECEIVED = 15;
     const STATUS_REFUNDED = 20;
 
+    /**
+     * 状态列表
+     * @var array
+     */
+    public static $STATUS_LIST = [
+        Order::STATUS_GROUPBUY_WAITING,
+        Order::STATUS_GROUPBUY_CANCELLED,
+        Order::STATUS_INIT,
+        Order::STATUS_SENT,
+        Order::STATUS_RECEIVED,
+        Order::STATUS_REFUNDED,
+    ];
+
     const DELIVER_EXPRESS = 0;
     const DELIVER_SELF = 1;
 

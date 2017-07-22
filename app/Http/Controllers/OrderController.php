@@ -30,13 +30,92 @@ class OrderController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getOrderList(Request $request) {
-        $orders = Order::with('product')
+        $queryOrder = Order::with('product')
             ->with('spec')
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('created_at', 'desc');
+
+        // 开始日期
+        $dateStart = $request->input('start_date');
+        if (!empty($dateStart)) {
+            $queryOrder->whereDate('created_at', '>=', $dateStart);
+        }
+
+        // 结束日期
+        $dateEnd = $request->input('end_date');
+        if (!empty($dateEnd)) {
+            $queryOrder->whereDate('created_at', '<=', $dateEnd);
+        }
+
+        // 商品
+        $product = $request->input('product');
+        if (!empty($product)) {
+            $queryOrder->whereHas('product', function($query) use ($product) {
+                $query->where('name', 'like', '%' . $product. '%');
+            });
+        }
+
+        // 配送渠道
+        $channel = $request->input('channel');
+        if ($channel == Order::DELIVER_EXPRESS || $channel == Order::DELIVER_SELF) {
+            $queryOrder->where('channel', $channel);
+        }
+
+        // 是否拼团
+        $groupbuy = $request->input('gropubuy');
+        if (!empty($groupbuy)) {
+            // 拼团
+            if ($groupbuy == 1) {
+                $queryOrder->whereNotNull('groupbuy_id');
+            }
+            // 非拼团
+            else {
+                $queryOrder->whereNull('groupbuy_id');
+            }
+        }
+
+        // 门店
+        $store = $request->input('store');
+        if (!empty($store)) {
+            $queryOrder->whereHas('store', function($query) use ($store) {
+                $query->where('name', 'like', '%' . $store. '%');
+            });
+        }
+
+        // 用户名
+        $name = $request->input('name');
+        if (!empty($name)) {
+            $queryOrder->where('name', 'like', '%' . $name. '%');
+        }
+
+        // 手机号
+        $phone = $request->input('phone');
+        if (!empty($phone)) {
+            $queryOrder->where('phone', 'like', '%' . $phone. '%');
+        }
+
+        // 订单状态
+        $status = $request->input('status');
+        if (!empty($status)) {
+            $queryOrder->where('status', $status);
+        }
+
+        $orders = $queryOrder->paginate();
 
         return view('order.list', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
+
+            // 筛选字段
+            'start_date' => $dateStart,
+            'end_date' => $dateEnd,
+            'produdct' => $product,
+            'channel' => $channel,
+            'groupbuy' => $groupbuy,
+            'store' => $store,
+            'name' => $name,
+            'phone' => $phone,
+            'status' => $status,
+
+            // 数据
             'orders'=> $orders,
         ]));
     }
