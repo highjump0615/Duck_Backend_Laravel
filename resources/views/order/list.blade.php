@@ -13,6 +13,113 @@
             </a>
         </nav>
         <div class="Hui-article">
+
+            <form action="{{url('/stat')}}" method="get">
+                <div class="filter-nav text-c">
+                    <div class="fields-div">
+                        <div>
+                            <!-- 日期范围 -->
+                            日期范围：
+                            <input type="text"
+                                   onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}'})"
+                                   id="logmin"
+                                   class="input-text Wdate"
+                                   name="start_date"
+                                   @if (!empty($start_date)) value="{{$start_date}}" @endif>
+                            -
+                            <input type="text"
+                                   onfocus="WdatePicker({minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d'})"
+                                   id="logmax"
+                                   class="input-text Wdate"
+                                   name="end_date"
+                                   @if (!empty($end_date)) value="{{$end_date}}" @endif>
+                            <!-- 商品 -->
+                            &nbsp;&nbsp;&nbsp;&nbsp;商品：
+                            <input type="text"
+                                   class="input-text"
+                                   name="product">
+                            <!-- 渠道选择 -->
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="select-box inline">
+                            <select name="channel" class="select">
+                                <option value="2"
+                                        @if (!empty($channel) && $channel == 2) selected @endif>
+                                    全部渠道
+                                </option>
+                                <option value="0"
+                                        @if (!empty($channel) && $channel == 0) selected @endif>
+                                    发货
+                                </option>
+                                <option value="1"
+                                        @if (!empty($channel) && $channel == 1) selected @endif>
+                                    自提
+                                </option>
+                            </select>
+                            </span>
+                            <!-- 是否拼团选择 -->
+                            <span class="select-box inline">
+                            <select name="channel" class="select">
+                                <option value="2"
+                                        @if (!empty($channel) && $channel == 2) selected @endif>
+                                    是否拼团
+                                </option>
+                                <option value="0"
+                                        @if (!empty($channel) && $channel == 0) selected @endif>
+                                    拼团
+                                </option>
+                                <option value="1"
+                                        @if (!empty($channel) && $channel == 1) selected @endif>
+                                    非拼团
+                                </option>
+                            </select>
+                            </span>
+                        </div>
+                        <div class="newline">
+                            <!-- 门店 -->
+                            <label for="store">门店：</label>
+                            <input type="text"
+                                   class="input-text"
+                                   name="store">
+                            <!-- 用户名 -->
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="name">用户名：</label>
+                            <input type="text"
+                                   class="input-text"
+                                   name="name">
+                            <!-- 手机号 -->
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="phone">手机号：</label>
+                            <input type="text"
+                                   class="input-text"
+                                   name="phone">
+                            <!-- 订单状态 -->
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <span class="select-box inline">
+                            <select name="channel" class="select">
+                                <option value="2"
+                                        @if (!empty($channel) && $channel == 2) selected @endif>
+                                    全部状态
+                                </option>
+                                <option value="0"
+                                        @if (!empty($channel) && $channel == 0) selected @endif>
+                                    发货
+                                </option>
+                                <option value="1"
+                                        @if (!empty($channel) && $channel == 1) selected @endif>
+                                    自提
+                                </option>
+                            </select>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 查询 -->
+                    <button class="btn btn-success" type="submit">
+                        <i class="Hui-iconfont">&#xe665;</i> 查询
+                    </button>
+                </div>
+            </form>
+
             <div>
                 <div class="pd-20">
                     <div class="cl pd-5 bg-1 bk-gray">
