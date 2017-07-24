@@ -144,6 +144,7 @@ class OrderController extends Controller
      */
     public function updateOrder(Request $request, $id) {
         $order = Order::find($id);
+        $errMsg = '';
 
         if ($order->status == Order::STATUS_INIT || $order->status == Order::STATUS_SENT) {
             if ($request->has('deliver_code')) {
@@ -158,8 +159,20 @@ class OrderController extends Controller
 
             $order->save();
         }
+        else if ($order->status == Order::STATUS_REFUND_REQUESTED) {
+            // 确认退款
+            $refundInfo = $this->refundOrder($order);
 
-        return redirect()->to(url('/order')."/detail/".$id);
+            if (!empty($refundInfo['err_code_des'])) {
+                $errMsg = $refundInfo['err_code_des'];
+            }
+        }
+
+        return view('order.detail', array_merge($this->viewBaseParams, [
+            'page' =>$this->menu . '.list',
+            'order'=>$order,
+            'errMsg'=>$errMsg
+        ]));
     }
 
     /**
@@ -493,28 +506,23 @@ class OrderController extends Controller
      */
     public function refundRequestApi(Request $request) {
         $nOrderId = $request->input('order_id');
+        $strReason = $request->input('reason');
+
         $order = Order::find($nOrderId);
 
-        $strRefundNo = time() . uniqid();
+        $order->status = Order::STATUS_REFUND_REQUESTED;
+        $order->refund_reason = Order::REFUND_OTHER;
+        $order->refund_reason_other = $strReason;
 
-        $input = new \WxPayRefund();
-        $input->SetOut_trade_no($order->trade_no);
-        $input->SetTotal_fee($order->price * 100);
-        $input->SetRefund_fee($order->price * 100);
-        $input->SetOut_refund_no($strRefundNo);
-        $input->SetOp_user_id(\WxPayConfig::MCHID);
+        $order->save();
 
-        $refundInfo = \WxPayApi::refund($input);
-
-//        $order->status = Order::STATUS_REFUND_REQUESTED;
-//        $order->save();
-//
-//        // 添加订单状态历史
-//        $order->addStatusHistory();
+        // 添加订单状态历史
+        $order->addStatusHistory();
 
         return response()->json([
             'status' => 'success',
-            'result' => $refundInfo
         ]);
     }
+
+
 }

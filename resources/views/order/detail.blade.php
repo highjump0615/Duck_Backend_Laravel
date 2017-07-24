@@ -11,7 +11,12 @@
             <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
         </nav>
         <div class="Hui-article">
+
             <article class="cl pd-20">
+                @if (!empty($errMsg))
+                <div class="Huialert Huialert-error">{{$errMsg}}</div>
+                @endif
+
                 <div id="tab-system" class="HuiTab">
 
                     <div class="tabBar cl">
@@ -137,7 +142,14 @@
                             <div class="row cl" style="margin-top: 30px">
                                 <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
                                     <button class="btn btn-primary radius" type="submit">
-                                        <i class="Hui-iconfont">&#xe632;</i> 保存并发货
+                                        <i class="Hui-iconfont">&#xe632;</i>
+                                        @if ($order->status == \App\Order::STATUS_INIT)
+                                        保存并发货
+                                        @elseif ($order->status == \App\Order::STATUS_REFUND_REQUESTED)
+                                        确认退款
+                                        @else
+                                        保存
+                                        @endif
                                     </button>
                                 </div>
                             </div>
