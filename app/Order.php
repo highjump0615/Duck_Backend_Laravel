@@ -5,13 +5,15 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+require_once app_path() . "/lib/Wxpay/WxPay.Api.php";
+
 class Order extends Model
 {
     use softDeletes;
 
     protected $fillable = [
         'customer_id', 'product_id', 'count', 'name', 'phone', 'channel', 'store_id', 'desc', 'address', 'pay_status',
-        'groupbuy_id', 'deliver_code', 'spec_id', 'price', 'status', 'number'
+        'groupbuy_id', 'deliver_code', 'spec_id', 'price', 'status', 'number', 'trade_no', 'refund_reason', 'refund_reason_other'
     ];
 
     public $timestamps = true;
@@ -48,6 +50,9 @@ class Order extends Model
 
     const STATUS_PAY_PAID = 0;
     const STATUS_PAY_REFUNDED = 1;
+
+    const REFUND_GROUPBUY_CANCEL = 1;
+    const REFUND_OTHER = 2;
 
     /**
      * 获取配送方式名称
@@ -181,5 +186,36 @@ class Order extends Model
 
             $groupBuy->delete();
         }
+    }
+
+    /**
+     * 进行退款
+     * @return \成功时返回，其他抛异常
+     */
+    public function refundOrder() {
+
+        $strRefundNo = time() . uniqid();
+
+        $input = new \WxPayRefund();
+        $input->SetOut_trade_no($this->trade_no);
+//        $input->SetTotal_fee($this->price * 100);
+//        $input->SetRefund_fee($this->price * 100);
+        $input->SetTotal_fee(1);
+        $input->SetRefund_fee(1);
+        $input->SetOut_refund_no($strRefundNo);
+        $input->SetOp_user_id(\WxPayConfig::MCHID);
+
+        $refundInfo = \WxPayApi::refund($input);
+
+        if ($refundInfo['result_code'] == "SUCCESS") {
+            // 成功
+            $this->status = Order::STATUS_REFUNDED;
+            $this->save();
+
+            // 添加订单状态历史
+            $this->addStatusHistory();
+        }
+
+        return $refundInfo;
     }
 }
