@@ -33,6 +33,7 @@ Route::group(['prefix'=>'/v1'], function() {
     Route::get('/orders/self', 'OrderController@getSelfsApi');
     Route::get('/order/detail/{id}', 'OrderController@getOrderDetailApi');
     Route::post('/order/receive', 'OrderController@receiveProductApi');
+    Route::post('/order/refund', 'OrderController@refundRequestApi');
 
     Route::get('/system/info', 'SystemController@getInfoApi');
 });

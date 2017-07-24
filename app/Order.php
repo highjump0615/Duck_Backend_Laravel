@@ -26,7 +26,8 @@ class Order extends Model
     const STATUS_INIT = 5;
     const STATUS_SENT = 10;
     const STATUS_RECEIVED = 15;
-    const STATUS_REFUNDED = 20;
+    const STATUS_REFUND_REQUESTED = 20;
+    const STATUS_REFUNDED = 25;
 
     /**
      * 状态列表
@@ -38,6 +39,7 @@ class Order extends Model
         Order::STATUS_INIT,
         Order::STATUS_SENT,
         Order::STATUS_RECEIVED,
+        ORder::STATUS_REFUND_REQUESTED,
         Order::STATUS_REFUNDED,
     ];
 
@@ -91,6 +93,9 @@ class Order extends Model
                 else {
                     return "已提货";
                 }
+            case Order::STATUS_REFUND_REQUESTED:
+                return "已申请退款";
+
             case Order::STATUS_REFUNDED:
                 return "已退款";
         }

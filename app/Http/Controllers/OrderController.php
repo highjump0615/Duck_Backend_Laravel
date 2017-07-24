@@ -172,6 +172,8 @@ class OrderController extends Controller
         $dPrice = $request->input('price');
         $nCustomerId = $request->input('customer_id');
 
+        $strTradeNo = time() . uniqid();
+
         $product = Product::find($nProductId);
         $customer = Customer::find($nCustomerId);
 
@@ -179,7 +181,7 @@ class OrderController extends Controller
         $worder = new \WxPayUnifiedOrder();
 
         $worder->SetBody($product->name);
-        $worder->SetOut_trade_no(time() . uniqid() );
+        $worder->SetOut_trade_no($strTradeNo);
         $worder->SetTotal_fee(intval($dPrice * 100));
         $worder->SetNotify_url("http://paysdk.weixin.qq.com/example/notify.php");
         $worder->SetTrade_type("JSAPI");
@@ -191,6 +193,7 @@ class OrderController extends Controller
         return response()->json([
             'status' => 'success',
             'result' => $payOrder,
+            'trade_no' => $strTradeNo
         ]);
     }
 
@@ -217,6 +220,7 @@ class OrderController extends Controller
         $order->channel         = $nChannel;
         $order->desc            = $request->input('desc');
         $order->price           = $request->input('price');
+        $order->trade_no        = $request->input('trade_no');
         $order->pay_status      = Order::STATUS_PAY_PAID;
         $order->status          = Order::STATUS_INIT;
 
@@ -479,6 +483,38 @@ class OrderController extends Controller
 
         return response()->json([
             'status' => 'success',
+        ]);
+    }
+
+    /**
+     * 申请退款API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refundRequestApi(Request $request) {
+        $nOrderId = $request->input('order_id');
+        $order = Order::find($nOrderId);
+
+        $strRefundNo = time() . uniqid();
+
+        $input = new \WxPayRefund();
+        $input->SetOut_trade_no($order->trade_no);
+        $input->SetTotal_fee($order->price * 100);
+        $input->SetRefund_fee($order->price * 100);
+        $input->SetOut_refund_no($strRefundNo);
+        $input->SetOp_user_id(\WxPayConfig::MCHID);
+
+        $refundInfo = \WxPayApi::refund($input);
+
+//        $order->status = Order::STATUS_REFUND_REQUESTED;
+//        $order->save();
+//
+//        // 添加订单状态历史
+//        $order->addStatusHistory();
+
+        return response()->json([
+            'status' => 'success',
+            'result' => $refundInfo
         ]);
     }
 }
