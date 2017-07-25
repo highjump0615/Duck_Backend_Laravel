@@ -161,7 +161,7 @@ class OrderController extends Controller
         }
         else if ($order->status == Order::STATUS_REFUND_REQUESTED) {
             // 确认退款
-            $refundInfo = $this->refundOrder($order);
+            $refundInfo = $order->refundOrder($order);
 
             if (!empty($refundInfo['err_code_des'])) {
                 $errMsg = $refundInfo['err_code_des'];

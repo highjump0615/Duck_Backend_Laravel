@@ -47,6 +47,7 @@ class GroupbuyTimeoutCron extends Command
         $dateNow = new DateTime("now");
 
         $orders = Order::with('product')
+            ->where('status', Order::STATUS_GROUPBUY_WAITING)
             ->whereHas('groupbuy', function ($query) use ($dateNow) {
                 $query->where('end_at', '<=', $dateNow);
             })
