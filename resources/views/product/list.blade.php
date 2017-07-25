@@ -117,26 +117,23 @@
         };
 
         var zNodes =[
-                @foreach($categories as $c)
+            @foreach($categories as $c)
             {  id:"{{$c->id}}", pId:0, name:"{{$c->name}}", file:"{{url('/products')}}?cat={{$c->id}}"},
-                @endforeach
+            @endforeach
         ];
 
         $(document).ready(function(){
             var t = $("#treeDemo");
             t = $.fn.zTree.init(t, setting, zNodes);
-            demoIframe = $("#testIframe");
-            demoIframe.bind("load", loadReady);
-            var zTree = $.fn.zTree.getZTreeObj("tree");
-            //zTree.selectNode(zTree.getNodeByParam("id",'1'));
+
+            @if (!empty($category))
+            t.selectNode(t.getNodeByParam("id", '{{$category->id}}'));
+            @endif
 
             $('.table-sort').dataTable({
                 'ordering': false
             });
         });
-
-        function loadReady(){
-        }
 
         /*图片-删除*/
         function product_del(obj,id){
