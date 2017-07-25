@@ -53,7 +53,12 @@ class ProductController extends Controller
             'category'=>$c,
         ]);
     }
-    
+
+    /**
+     * 打开商品列表页面
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showProductList(Request $request) {
         $categories = Category::all();
 
