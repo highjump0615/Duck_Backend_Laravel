@@ -84,10 +84,19 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-8">
-                                        <label class="form-label pull-left col-sm-2">地址</label>
-                                        <div class="col-sm-10 pull-left">
-                                            <input type="text" value="{{$order->address}}" class="input-text" readonly>
-                                        </div>
+                                        @if ($order->channel == \App\Order::DELIVER_EXPRESS)
+                                            <!-- 快递 -->
+                                            <label class="form-label pull-left col-sm-2">地址</label>
+                                            <div class="col-sm-10 pull-left">
+                                                <input type="text" value="{{$order->address}}" class="input-text" readonly>
+                                            </div>
+                                        @else
+                                            <!-- 门店 -->
+                                            <label class="form-label pull-left col-sm-2">门店</label>
+                                            <div class="col-sm-10 pull-left">
+                                                <input type="text" value="{{$order->store->name}}" class="input-text" readonly>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

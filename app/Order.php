@@ -99,7 +99,7 @@ class Order extends Model
                     return "已提货";
                 }
             case Order::STATUS_REFUND_REQUESTED:
-                return "已申请退款";
+                return "退款审核中";
 
             case Order::STATUS_REFUNDED:
                 return "已退款";

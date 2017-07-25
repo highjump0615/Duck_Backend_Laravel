@@ -50,8 +50,16 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text"
                                class="input-text"
+                               onkeyup="$.Huitextarealength(this, 20)"
                                @if(isset($product)) value="{{$product->name}}" @endif
                                name="name">
+                        <p class="textarea-numberbar">
+                            @if (!empty($product))
+                                <em class="textarea-length">{{strlen($product->name)}}</em>/20
+                            @else
+                                <em class="textarea-length">0</em>/20
+                            @endif
+                        </p>
                     </div>
                 </div>
 
@@ -225,9 +233,11 @@
     <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/messages_zh.js')?>"></script>
 
     <script type="text/javascript" src="<?=asset('lib/webuploader/0.1.5/webuploader.min.js')?>"></script>
+
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/ueditor.config.js')?>"></script>
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/ueditor.all.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js')?>"></script>
+
     <script>
 
         // WebUploader实例
@@ -255,29 +265,7 @@
             });
         };
 
-        $(function () {
-            var objEditor = $('#editor');
-            objEditor.css('height', '400px');
-            objEditor.css('width', '100%');
-
-            var ue = UE.getEditor('editor');
-
-            function readURL(input) {
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        $('#blah').attr('src', e.target.result);
-                    };
-
-                    reader.readAsDataURL(input.files[0]);
-                }
-            }
-
-            $("#imgInp").change(function () {
-                readURL(this);
-            });
-
+        function setDeleteSpec() {
             //
             // 删除规格
             //
@@ -312,6 +300,32 @@
                     });
                 });
             });
+        }
+
+        $(function () {
+            var objEditor = $('#editor');
+            objEditor.css('height', '400px');
+            objEditor.css('width', '100%');
+
+            var ue = UE.getEditor('editor');
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#blah').attr('src', e.target.result);
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#imgInp").change(function () {
+                readURL(this);
+            });
+
+            setDeleteSpec();
 
             var objForm = $("#form-product");
 
@@ -980,10 +994,16 @@
                     enableSubmit('btn-rule-add', true);
 
                     // 添加到主页面
-                    $('.prod-spec').append('<label><input type="checkbox" value="1" name="spec' + data.rule + '" checked /> ' + rule + '</label>');
+                    $('.prod-spec').append('<label>' +
+                        '<input type="checkbox" value="1" name="spec' + data.rule + '" checked /> ' +
+                        rule +
+                        '<a data-spec="' + data.rule + '"><i class="Hui-iconfont">&#xe6a6;</i></a>' +
+                        '</label>');
 
                     // 清空规则输入
                     $('#rule-name').val('');
+
+                    setDeleteSpec();
                 },
                 error: function (data) {
                     enableSubmit('btn-rule-add', true);
