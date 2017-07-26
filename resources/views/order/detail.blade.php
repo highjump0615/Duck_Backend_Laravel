@@ -26,7 +26,7 @@
 
                     <!-- 订单详情 -->
                     <div class="tabCon" style="display: block">
-                        <form action="{{url('/order')}}/{{$order->id}}" method="post" class="form form-horizontal" id="form-article-add">
+                        <form action="{{url('/order')}}/{{$order->id}}" method="post" class="form form-horizontal" id="form-detail">
                             {!! csrf_field() !!}
                             <div class="row cl">
                                 <label class="form-label col-xs-4 col-sm-2">订单号：</label>
@@ -150,7 +150,7 @@
 
                             <div class="row cl" style="margin-top: 30px">
                                 <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                                    <button class="btn btn-primary radius" type="submit">
+                                    <button class="btn btn-primary radius" type="submit" id="btn-submit">
                                         <i class="Hui-iconfont">&#xe632;</i>
                                         @if ($order->status == \App\Order::STATUS_INIT)
                                         保存并发货
@@ -198,12 +198,45 @@
 
     <script type="text/javascript">
         $(function(){
+            var strUrl = document.referrer;
+
             $('.skin-minimal input').iCheck({
                 checkboxClass: 'icheckbox-blue',
                 radioClass: 'iradio-blue',
                 increaseArea: '20%'
             });
             $.Huitab("#tab-system .tabBar span","#tab-system .tabCon","current","click","0");
+
+            // 提交
+            $('#form-detail').submit(function(e) {
+                e.preventDefault();
+
+                var butSubmit = $("#btn-submit");
+
+                // 提交
+                $.ajax({
+                    type: 'POST',
+                    url: '{{url("/order")}}/{{$order->id}}',
+                    data: $(this).serializeArray(),
+                    success: function (data) {
+                        layer.msg('保存成功，信息已更新', {icon:1,time:1000}, function() {
+                            location.replace(strUrl);
+                        });
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                    complete: function() {
+                        // enable submit按钮
+                        objSubmit.removeClass('disabled');
+                        objSubmit.removeAttr('disabled');
+                    }
+                });
+
+                // disable 按钮
+                butSubmit.addClass('disabled');
+                butSubmit.attr('disabled');
+            });
         });
     </script>
 
