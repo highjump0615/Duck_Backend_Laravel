@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/category', 'ProductController@showCategory');
     Route::get('/category_add', 'ProductController@category_add');
     Route::post('/category', 'ProductController@saveCategory');
+    Route::post('/category/updateOrder', 'ProductController@updateCateogryOrder');
     Route::delete('/category', 'ProductController@deleteCategory');
 
 

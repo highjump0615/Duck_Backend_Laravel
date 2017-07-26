@@ -21,3 +21,12 @@
 }
 
 /* layer 样式 */
+
+/* ztree 插件 */
+.tmpzTreeMove_arrow {
+    z-index: 1;
+}
+
+.disabled-control {
+    opacity: 0.3;
+}

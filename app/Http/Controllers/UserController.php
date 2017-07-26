@@ -29,6 +29,7 @@ class UserController extends Controller
 
             // 数据
             'users' => $users,
+            'currentUser' => $this->getCurrentUser()
         ]));
     }
 
@@ -37,7 +38,16 @@ class UserController extends Controller
      * @return array
      */
     private function getBaseData() {
-        $roles = Role::orderBy('id', 'desc')->get();
+        $currentUser = $this->getCurrentUser();
+
+        // 超级管理员
+        if ($currentUser->role_id == 1) {
+            $query = Role::orderBy('id', 'desc');
+        }
+        else {
+            $query = Role::where('id', '>', 1)->orderBy('id', 'desc');
+        }
+        $roles = $query->get();
 
         return ['roles' => $roles];
     }

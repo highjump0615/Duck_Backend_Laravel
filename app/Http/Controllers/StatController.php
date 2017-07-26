@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Order;
 use App\Product;
 use App\Store;
 use Illuminate\Http\Request;
@@ -22,11 +23,19 @@ class StatController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(Request $request) {
+        $queryOrder = Order::query();
+
         // 获取参数
-        $nStoreIds = array();
         $nProductId = $request->input('product');
+        if (!empty($nProductId)) {
+            
+        }
+
+
         $strDateStart = $request->input('start_date');
         $strDateEnd = $request->input('end_date');
+
+        $nStoreIds = array();
         if ($request->has('store')) {
             $nStoreIds = $request->input('store');
         }
@@ -37,6 +46,12 @@ class StatController extends Controller
 
         // 获取所有门店
         $stores = Store::get(['id', 'name']);
+
+        //
+        // 获取统计数据
+        //
+        $stats = array();
+
 
         return view('stat.index', array_merge($this->viewBaseParams, [
             'page'          => $this->menu . '.data',
@@ -49,6 +64,8 @@ class StatController extends Controller
 
             'products'      => $products,
             'stores'        => $stores,
+
+            'stat'          => $stats
         ]));
     }
 }
