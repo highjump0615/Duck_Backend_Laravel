@@ -76,7 +76,7 @@
                         return true;
                     }
                 },
-                onDrop: onDropTree,
+                beforeDrop: onDropTree,
                 // 限制有的字段不能动
                 beforeDrag: function(treeId, treeNode) {
                     // 保存选中的node
@@ -90,8 +90,15 @@
                     }
                     return true;
                 },
-                beforeDrop: function(treeId, treeNode, targetNode, moveType, isCopy) {
-                    return targetNode ? targetNode.drop !== false : true;
+                onDrop: function(event, treeId, treeNodes, targetNode, moveType, isCopy) {
+                    // 保持原来的选择
+                    var zTree = $.fn.zTree.getZTreeObj(treeId);
+                    if (nodeSelected && nodeSelected.length > 0) {
+                        zTree.selectNode(nodeSelected[0]);
+                    }
+                    else {
+                        zTree.cancelSelectedNode(treeNodes[0]);
+                    }
                 }
             }
         };
@@ -106,19 +113,14 @@
          * @param isCopy
          * @returns {boolean}
          */
-        function onDropTree(event, treeId, treeNodes, targetNode, moveType, isCopy) {
-            // 没有拖拽对象
-            if (treeNodes.length <= 0) {
+        function onDropTree(treeId, treeNodes, targetNode, moveType, isCopy) {
+            if (targetNode.drop === false) {
                 return false;
             }
 
-            // 保持原来的选择
-            var zTree = $.fn.zTree.getZTreeObj(treeId);
-            if (nodeSelected && nodeSelected.length > 0) {
-                zTree.selectNode(nodeSelected[0]);
-            }
-            else {
-                zTree.cancelSelectedNode(treeNodes[0]);
+            // 没有拖拽对象
+            if (treeNodes.length <= 0) {
+                return false;
             }
 
             // 拖拽无效

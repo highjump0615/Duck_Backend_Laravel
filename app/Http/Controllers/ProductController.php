@@ -385,7 +385,7 @@ class ProductController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateCateogryOrder(Request $request) {
+    public function updateCategoryOrder(Request $request) {
         $objectId =  $request->input('object_id');
         $targetId =  $request->input('target_id');
 
@@ -399,7 +399,7 @@ class ProductController extends Controller
         Category::where('sequence', '>', $nSeq)->increment('sequence', 1);
 
         // 设置新的顺序
-        Category::where('id', $objectId)->update(['sequence' => $nSeq]);
+        Category::where('id', $objectId)->update(['sequence' => $nSeq + 1]);
 
         return response()->json([
             'status' => 'success',
