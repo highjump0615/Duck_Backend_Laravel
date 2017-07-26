@@ -315,15 +315,14 @@ class ProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getProductDetailApi(Request $request, $productId) {
-        $customerId =  $request->input('cusomter_id');
+        $customerId =  $request->input('customer_id');
 
         $product = Product::with('images')
             ->with('specs')
             ->find($productId);
 
-        // 获取拼团, 自己开启的除外
+        // 获取拼团
         $groubBuys = Groupbuy::whereHas('orders', function($query) use ($productId, $customerId) {
-            $query->where('customer_id', '!=', $customerId);
             $query->where('product_id', $productId);
         })->get();
 
@@ -357,7 +356,23 @@ class ProductController extends Controller
 
         // 拼团
         $result['groupbuys'] = [];
+
         foreach ($groubBuys as $gb) {
+            $bSkip = false;
+
+            // 自己开启的除外
+            $gOrders = $gb->orders;
+            foreach ($gOrders as $go) {
+                if ($go->customer_id == $customerId) {
+                    $bSkip = true;
+                    break;
+                }
+            }
+
+            if ($bSkip) {
+                continue;
+            }
+
             $gbInfo = [
                 'id' => $gb->id,
                 'persons' => $gb->getPeopleCount(),
@@ -365,7 +380,7 @@ class ProductController extends Controller
             ];
 
             // 发起人
-            $starter = $gb->orders()->first()->customer;
+            $starter = $gOrders->first()->customer;
             $gbInfo['customer'] = [
                 'name' => $starter->name,
                 'image_url' => $starter->image_url,
