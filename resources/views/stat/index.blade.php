@@ -112,10 +112,10 @@
                         </thead>
                         <tbody>
                         <tr class="text-c">
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>{{$stat[0]}}</td>
+                            <td>{{$stat[1]}}</td>
+                            <td>{{$stat[2]}}</td>
+                            <td>{{$stat[3]}}</td>
                         </tr>
                         </tbody>
                     </table>
