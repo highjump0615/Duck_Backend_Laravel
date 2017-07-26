@@ -379,6 +379,7 @@ class OrderController extends Controller
         $orderInfo['id'] = $order->id;
         $orderInfo['number'] = $order->number;
         $orderInfo['status_val'] = $order->status;
+        $orderInfo['refund_reason'] = $order->refund_reason;
         $orderInfo['status'] = Order::getStatusName($order->status, $order->channel);
         $orderInfo['product_image'] = $order->product->getThumbnailUrl();
         $orderInfo['product_name'] = $order->product->name;
@@ -386,7 +387,9 @@ class OrderController extends Controller
         $orderInfo['deliver_cost'] = $order->product->deliver_cost;
         $orderInfo['count'] = $order->count;
         $orderInfo['is_groupbuy'] = !empty($order->groupbuy_id);
-        $orderInfo['spec'] = $order->spec->name;
+        if (!empty($order->spec)) {
+            $orderInfo['spec'] = $order->spec->name;
+        }
         $orderInfo['price'] = $order->price;
         $orderInfo['created_at'] = getStringFromDateTime($order->created_at);
         $orderInfo['channel'] = $order->channel;

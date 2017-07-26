@@ -153,7 +153,11 @@
                                 <td>{{$o->number}}</td>
                                 <td>{{$o->product->name}}</td>
                                 <td class="text-l">{{$o->count}}</td>
-                                <td class="text-l">{{$o->spec->name}}</td>
+                                <td class="text-l">
+                                    @if (!empty($o->spec))
+                                    {{$o->spec->name}}
+                                    @endif
+                                </td>
                                 <td class="text-l">{{$o->name}}</td>
                                 <td class="text-l">{{$o->phone}}</td>
                                 <td class="text-l">{{$o->getDeliveryName()}}</td>
