@@ -85,7 +85,7 @@
 
 @section('script')
     <script type="text/javascript" src="<?=asset('lib/datatables/1.10.0/jquery.dataTables.min.js') ?>"></script>
-    <script type="text/javascript" src="<?=asset('lib/zTree/v3/js/jquery.ztree.all-3.5.min.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('lib/zTree/v3/js/jquery.ztree.all.min.js')?>"></script>
     <script type="text/javascript">
         var setting = {
             view: {

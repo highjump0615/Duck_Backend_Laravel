@@ -16,7 +16,7 @@ use File;
 class ProductController extends Controller
 {
     public function showCategory(Request $request) {
-        $categories = Category::all();
+        $categories = Category::orderBy('sequence')->get();
 
         return view('product.category', [
             'categories'=>$categories,
@@ -60,7 +60,7 @@ class ProductController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showProductList(Request $request) {
-        $categories = Category::all();
+        $categories = Category::orderBy('sequence')->get();
 
         if($request->has('cat')) {
             $c = Category::find($request->input('cat'));
@@ -275,7 +275,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCategoriesApi(Request $request) {
-        $categories = Category::get(['id', 'name']);
+        $categories = Category::orderBy('sequence')->get(['id', 'name']);
 
         return response()->json([
             'status' => 'success',
@@ -377,6 +377,32 @@ class ProductController extends Controller
         return response()->json([
             'status' => 'success',
             'result' => $result,
+        ]);
+    }
+
+    /**
+     * 设置分类顺序
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateCateogryOrder(Request $request) {
+        $objectId =  $request->input('object_id');
+        $targetId =  $request->input('target_id');
+
+        $nSeq = 0;
+
+        if ($targetId > 0) {
+            $nSeq = Category::find($targetId)->sequence;
+        }
+
+        // 增加顺序值
+        Category::where('sequence', '>', $nSeq)->increment('sequence', 1);
+
+        // 设置新的顺序
+        Category::where('id', $objectId)->update(['sequence' => $nSeq]);
+
+        return response()->json([
+            'status' => 'success',
         ]);
     }
 }
