@@ -142,6 +142,7 @@
                                 <th>姓名</th>
                                 <th>手机号</th>
                                 <th>配送方式</th>
+                                <th>门店</th>
                                 <th>金额</th>
                                 <th>订单状态</th>
                                 <th>操作</th>
@@ -161,6 +162,11 @@
                                 <td class="text-l">{{$o->name}}</td>
                                 <td class="text-l">{{$o->phone}}</td>
                                 <td class="text-l">{{$o->getDeliveryName()}}</td>
+                                <td class="text-l">
+                                    @if (!empty($o->store))
+                                    {{$o->store->name}}
+                                    @endif
+                                </td>
                                 <td><span class="price">{{$o->price}}</span> 元</td>
                                 <td class="td-status">{{\App\Order::getStatusName($o->status, $o->channel)}}</td>
                                 <td class="td-manage">
