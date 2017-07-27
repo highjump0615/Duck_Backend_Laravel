@@ -220,6 +220,7 @@ class OrderController extends Controller
         $nCount = $request->input('count');
         $product = Product::find($nProductId);
         $nChannel = $request->input('channel');
+        $nSpecId = $request->input('spec_id');
 
         $order = new Order();
 
@@ -229,7 +230,9 @@ class OrderController extends Controller
         $order->count           = $nCount;
         $order->name            = $request->input('name');
         $order->phone           = $request->input('phone');
-        $order->spec_id         = $request->input('spec_id');
+        if (!empty($nSpecId)) {
+            $order->spec_id     = $nSpecId;
+        }
         $order->channel         = $nChannel;
         $order->desc            = $request->input('desc');
         $order->price           = $request->input('price');
