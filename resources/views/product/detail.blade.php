@@ -114,7 +114,7 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" name="price" id="price" placeholder=""
                                @if(isset($product)) value="{{$product->price}}" @endif class="input-text"
-                               style="width:90%">
+                               style="width:80%">
                         元
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" name="deliver_cost" id="" placeholder=""
                                @if(isset($product)) value="{{$product->deliver_cost}}" @endif class="input-text"
-                               style="width:90%">
+                               style="width:80%">
                         元
                     </div>
                 </div>
@@ -240,6 +240,16 @@
 
     <script>
 
+        // 添加validate规则
+        $.validator.addMethod(
+            'fractionLimit',
+            function (value, element, requiredValue) {
+                var nDigits = value.toString().split('.')[1].length;
+                return nDigits <= 2;
+            },
+            '不能输入2位以上小数'
+        );
+
         // WebUploader实例
         var uploader;
 
@@ -338,7 +348,9 @@
                         required: true
                     },
                     price: {
-                        required: true
+                        required: true,
+                        number: true,
+                        fractionLimit: 2
                     },
                     deliver_cost: {
                         required: true
