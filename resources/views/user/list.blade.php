@@ -119,7 +119,7 @@
                 // 删除
                 $.ajax({
                     type: 'GET',
-                    url: '/user/remove/' + nId,
+                    url: '{{url("/user/remove")}}' + '/' + nId,
                     data: {},
                     success: function (data) {
                         trObj.remove();
