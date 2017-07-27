@@ -99,9 +99,9 @@
         $(function(){
             $("#form-article-add").validate({
                 rules:{
-                    image:{
-                        required:true
-                    },
+//                    image:{
+//                        required:true
+//                    },
                     product_id:{
                         required:true
                     },
