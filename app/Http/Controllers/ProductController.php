@@ -47,6 +47,10 @@ class ProductController extends Controller
         $c->name = $request->input('name');
         $c->desc = $request->input('desc');
 
+        // 顺序
+        $nSequence = Category::max('sequence');
+        $c->sequence = $nSequence + 1;
+
         $c->save();
 
         return view('product.category_add', [
