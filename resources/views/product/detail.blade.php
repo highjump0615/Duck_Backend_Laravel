@@ -246,8 +246,14 @@
         $.validator.addMethod(
             'fractionLimit',
             function (value, element, requiredValue) {
+                // 如果输入的整数，直接通过
+                if (value % 1 === 0) {
+                    return true;
+                }
+
+                // 小数，检查位数
                 var nDigits = value.toString().split('.')[1].length;
-                return nDigits <= 2;
+                return nDigits <= requiredValue;
             },
             '不能输入2位以上小数'
         );
