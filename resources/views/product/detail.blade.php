@@ -38,7 +38,7 @@
         </nav>
 
         <div class="page-container">
-            <form action="{{url('/product')}}" method="post" class="form form-horizontal" id="form-product" enctype="multipart/form-data">
+            <form class="form form-horizontal" id="form-product" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 @if(isset($product))
                     <input type="hidden" name="product_id" value="{{$product->id}}">
@@ -211,17 +211,19 @@
                     </div>
                 </div>
 
-
-                <div class="row cl">
-                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                        <button id="butSubmit" class="btn btn-primary radius" type="submit">
-                            <i class="Hui-iconfont">&#xe632;</i>
-                            <span>保存并提交</span>
-                        </button>
-                        <button onClick="onCancel();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
-                    </div>
-                </div>
             </form>
+
+            <!-- 提交按钮 -->
+            <div class="row cl mt-30">
+                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                    <button id="butSubmit" class="btn btn-primary radius">
+                        <i class="Hui-iconfont">&#xe632;</i>
+                        <span>保存并提交</span>
+                    </button>
+                    <button onClick="onCancel();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -378,7 +380,7 @@
 
                 if (uploader.getFiles().length <= 0) {
                     alert('请添加图片');
-                    return;
+                    return false;
                 }
 
                 var sendData = new FormData();
@@ -421,6 +423,12 @@
 
                 enableSubmit('butSubmit', false);
                 $('#butSubmit span').text('正在提交...');
+
+                return false;
+            });
+
+            $('#butSubmit').click(function(e) {
+                objForm.submit();
             });
         });
 

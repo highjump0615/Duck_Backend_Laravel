@@ -18,7 +18,7 @@ class Ad extends Model
     public $timestamps = true;
 
     public function product() {
-        return $this->belongsTo('App\Product');
+        return $this->belongsTo('App\Product')->withTrashed();
     }
 
     public function getImageFullPathAttribute() {
