@@ -135,7 +135,7 @@ class Order extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function product() {
-        return $this->belongsTo('App\Product');
+        return $this->belongsTo('App\Product')->withTrashed();
     }
 
     /**
