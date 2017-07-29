@@ -384,6 +384,7 @@ class OrderController extends Controller
         $orderInfo['status_val'] = $order->status;
         $orderInfo['refund_reason'] = $order->refund_reason;
         $orderInfo['status'] = Order::getStatusName($order->status, $order->channel);
+        $orderInfo['product_id'] = $order->product->id;
         $orderInfo['product_image'] = $order->product->getThumbnailUrl();
         $orderInfo['product_name'] = $order->product->name;
         $orderInfo['product_price'] = $dPrice;
