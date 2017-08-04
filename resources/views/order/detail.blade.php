@@ -160,6 +160,12 @@
                                         保存
                                         @endif
                                     </button>
+                                    @if ($order->status < \App\Order::STATUS_REFUND_REQUESTED)
+                                    <button type="button" class="btn btn-danger radius ml-30" id="btn-refund">
+                                        <i class="Hui-iconfont">&#xe6f7;</i>
+                                        退款
+                                    </button>
+                                    @endif
                                 </div>
                             </div>
                         </form>
@@ -238,6 +244,42 @@
                 butSubmit.attr('disabled');
             });
         });
+
+        /**
+         * 点击退款按钮
+         */
+        var butRefund = $("#btn-refund");
+        butRefund.click(function() {
+            // 提交
+            $.ajax({
+                type: 'POST',
+                url: '{{url("/order/refund")}}/{{$order->id}}',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function (data) {
+                    if (data.status === 'SUCCESS') {
+                        layer.msg('退款成功', {icon:1,time:1000}, function() {
+                            location.reload();
+                        });
+                    }
+                    else {
+                        layer.msg('退款失败', {icon:2,time:1000});
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+
+                    layer.msg('退款失败', {icon:2,time:1000});
+                },
+                complete: function() {
+                    butRefund.removeClass('disabled');
+                }
+            });
+
+            butRefund.addClass('disabled');
+        });
+
     </script>
 
 @endsection
