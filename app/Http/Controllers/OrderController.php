@@ -9,6 +9,7 @@ use App\Product;
 use DateTime;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -173,6 +174,21 @@ class OrderController extends Controller
             'order'=>$order,
             'errMsg'=>$errMsg
         ]));
+    }
+
+    /**
+     * 退款
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function refundOrder(Request $request, $id) {
+        $order = Order::find($id);
+        $refundInfo = $order->refundOrder();
+
+        return response()->json([
+            'status' => $refundInfo['result_code'],
+        ]);
     }
 
     /**
