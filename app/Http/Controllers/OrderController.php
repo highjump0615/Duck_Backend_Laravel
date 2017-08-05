@@ -366,8 +366,15 @@ class OrderController extends Controller
         foreach ($orders as $order) {
             $orderInfo = $this->getOrderInfoSimple($order);
 
+            $customers = array();
+
+            $orderGroups = $order->groupBuy->orders()->with('customer')->get();
+            foreach ($orderGroups as $og) {
+                $customers[] = $og->customer;
+            }
+
             $orderInfo['groupbuy'] = [
-                'persons' => $order->groupBuy->getPeopleCount(),
+                'persons' => $customers,
                 'remain_time' => $order->groupBuy->getRemainTime(),
             ];
 
@@ -406,7 +413,9 @@ class OrderController extends Controller
         $orderInfo['product_price'] = $dPrice;
         $orderInfo['deliver_cost'] = $order->product->deliver_cost;
         $orderInfo['count'] = $order->count;
+
         $orderInfo['is_groupbuy'] = !empty($order->groupbuy_id);
+
         if (!empty($order->spec)) {
             $orderInfo['spec'] = $order->spec->name;
         }
@@ -491,9 +500,17 @@ class OrderController extends Controller
         $result['deliver_code'] = getEmptyString($order->deliver_code);
         $result['deliver_cost'] = $order->product->deliver_cost;
 
+        $result['groupbuys'] = array();
+
         // 拼团
         if (!empty($order->groupBuy)) {
-            $result['groupbuy_persons'] = $order->groupBuy->getPeopleCount();
+            $orderGroups = Order::with('customer')
+                ->where('groupbuy_id', $order->groupbuy_id)
+                ->get();
+
+            foreach ($orderGroups as $og) {
+                $result['groupbuys'][] = $og->customer;
+            }
         }
 
         return response()->json([
