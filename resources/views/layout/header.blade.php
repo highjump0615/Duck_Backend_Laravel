@@ -2,7 +2,7 @@
 <header class="navbar-wrapper">
     <div class="navbar navbar-fixed-top">
         <div class="container-fluid cl">
-            <a class="logo navbar-logo f-l mr-10 hidden-xs" href="{{url('/')}}">皇老鸭</a>
+            <a class="logo navbar-logo f-l mr-10 hidden-xs" href="{{url('/')}}">田家优鲜</a>
             <span class="logo navbar-slogan f-l mr-10 hidden-xs">v0.1</span>
             <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
                 <ul class="cl">

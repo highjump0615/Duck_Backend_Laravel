@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/product/{id}/edit', 'ProductController@showProduct');
     Route::post('/product', 'ProductController@saveProduct');
     Route::post('/product/uploadImage', 'ProductController@uploadImage');
+    Route::post('/product/mount', 'ProductController@mountProduct');
     Route::delete('/product', 'ProductController@deleteProduct');
 
     // 规格

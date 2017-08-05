@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
+
     protected $fillable = [
-        'name', 'category_id', 'rtf_content', 'thumbnail', 'price', 'deliver_cost', 'gb_count', 'gb_price', 'gb_timeout',
+        'name', 'category_id', 'rtf_content', 'thumbnail', 'price', 'deliver_cost', 'gb_count', 'gb_price', 'gb_timeout', 'active',
         'remain',
     ];
 
