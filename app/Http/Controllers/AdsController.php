@@ -34,7 +34,7 @@ class AdsController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showAdd() {
-        $products = Product::all();
+        $products = ProductController::getProducts()->get();
         return view('ads.detail', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
             'products'=>$products,
@@ -48,7 +48,7 @@ class AdsController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showDetail(Request $request, $id) {
-        $products = Product::all();
+        $products = ProductController::getProducts()->get();
         $ad = Ad::find($id);
         return view('ads.detail', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',

@@ -15,6 +15,14 @@ use File;
 
 class ProductController extends Controller
 {
+    /**
+     * 获取商品
+     * @return mixed
+     */
+    public static function getProducts() {
+        return Product::where('active', Product::STATUS_ACTIVE);
+    }
+
     public function showCategory(Request $request) {
         $categories = Category::orderBy('sequence')->get();
 
@@ -212,6 +220,19 @@ class ProductController extends Controller
     }
 
     /**
+     * 上架/下架
+     * @param Request $request
+     */
+    public function mountProduct(Request $request) {
+        $pid = $request->input('product_id');
+        $mount = $request->input('mount');
+
+        $product = Product::find($pid);
+        $product->active = $mount;
+        $product->save();
+    }
+
+    /**
      * 删除商品
      * @param Request $request
      */
@@ -293,7 +314,8 @@ class ProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getProductsApi($categoryId) {
-        $products = Product::where('category_id', $categoryId)
+        $products = ProductController::getProducts()
+            ->where('category_id', $categoryId)
             ->get();
 
         $result = [];
