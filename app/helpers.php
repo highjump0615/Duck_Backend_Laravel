@@ -61,5 +61,5 @@ function intToString($value, $length) {
     $nMax = 10 * $length;
     $nValue = $value % $nMax;
 
-    return str_pad($nValue, $length, "0", STR_PAD_LEFT);
+    return str_pad(strval($nValue), $length, "0", STR_PAD_LEFT);
 }
