@@ -15,7 +15,7 @@
 <body>
     <div class="login-page">
         <div class="text-center">
-            <h3 style="color: white;"><strong>皇老鸭</strong></h3>
+            <h3 style="color: white;"><strong>田家优鲜</strong></h3>
         </div>
         <div class="form">
             <form action="{{url('/login')}}" method="POST">

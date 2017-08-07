@@ -156,6 +156,34 @@ class OrderController extends Controller
             if ($order->status == Order::STATUS_INIT) {
                 $order->status = Order::STATUS_SENT;
                 $order->addStatusHistory();
+
+                // 推送消息，拼团成功
+                $nctrl = new NotificationController();
+
+                $strToken = $nctrl->getAccessToken();
+                $params = array();
+                $params["keyword1"] = [
+                    "value" => $order->product->name,
+                ];
+                $params["keyword2"] = [
+                    "value" => $order->number,
+                ];
+                $params["keyword3"] = [
+                    "value" => $order->address,
+                ];
+                $params["keyword4"] = [
+                    "value" => $order->name,
+                ];
+                $params["keyword5"] = [
+                    "value" => $order->deliver_code,
+                ];
+
+                $nctrl->sendPushNotification($strToken, [
+                    "touser" => $order->customer->wechat_id,
+                        "template_id" => "4vzFUADZnrupzQqnpUBAW7F8GjQqNT8sL1he0aQ9R3E",
+                    "form_id" => $order->formid,
+                    "data" => $params,
+                ]);
             }
 
             $order->save();
@@ -253,6 +281,10 @@ class OrderController extends Controller
         $order->desc            = $request->input('desc');
         $order->price           = $request->input('price');
         $order->trade_no        = $request->input('trade_no');
+
+        $order->formid          = $request->input('formid');
+        $order->formid_group    = $request->input('formid_group');
+
         $order->pay_status      = Order::STATUS_PAY_PAID;
         $order->status          = Order::STATUS_INIT;
 

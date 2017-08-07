@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Http\Controllers\NotificationController;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,7 +15,8 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id', 'product_id', 'count', 'name', 'phone', 'channel', 'store_id', 'desc', 'address', 'pay_status',
-        'groupbuy_id', 'deliver_code', 'spec_id', 'price', 'status', 'number', 'trade_no', 'refund_reason', 'refund_reason_other'
+        'groupbuy_id', 'deliver_code', 'spec_id', 'price', 'status', 'number', 'trade_no', 'refund_reason', 'refund_reason_other',
+        'formid', 'formid_group'
     ];
 
     public $timestamps = true;
@@ -178,10 +181,38 @@ class Order extends Model
         }
 
         if ($groupBuy->getPeopleCount() == $product->gb_count) {
+
+            $nctrl = new NotificationController();
+            $strToken = $nctrl->getAccessToken();
+
             foreach ($groupBuy->orders as $order) {
                 $order->status = Order::STATUS_INIT;
                 $order->save();
                 $order->addStatusHistory();
+
+                //
+                // 推送消息，拼团成功
+                //
+                $params = array();
+                $params["keyword1"] = [
+                    "value" => $product->name,
+                ];
+                $params["keyword2"] = [
+                    "value" => $order->price,
+                ];
+                $params["keyword3"] = [
+                    "value" => $product->gb_count,
+                ];
+                $params["keyword4"] = [
+                    "value" => "24小时之内",
+                ];
+
+                $nctrl->sendPushNotification($strToken, [
+                    "touser" => $order->customer->wechat_id,
+                    "template_id" => "e5m9kx7gcP46tjSfJVa1d1W-Pn6W7UXxAjtA4Pry97M",
+                    "form_id" => $order->formid_group,
+                    "data" => $params,
+                ]);
             }
 
             $groupBuy->delete();

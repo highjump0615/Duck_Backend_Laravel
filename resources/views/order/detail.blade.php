@@ -234,8 +234,8 @@
                     },
                     complete: function() {
                         // enable submit按钮
-                        objSubmit.removeClass('disabled');
-                        objSubmit.removeAttr('disabled');
+                        butSubmit.removeClass('disabled');
+                        butSubmit.removeAttr('disabled');
                     }
                 });
 
