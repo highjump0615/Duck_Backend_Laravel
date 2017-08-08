@@ -229,10 +229,8 @@ class Order extends Model
 
         $input = new \WxPayRefund();
         $input->SetOut_trade_no($this->trade_no);
-//        $input->SetTotal_fee($this->price * 100);
-//        $input->SetRefund_fee($this->price * 100);
-        $input->SetTotal_fee(1);
-        $input->SetRefund_fee(1);
+        $input->SetTotal_fee($this->price * 100);
+        $input->SetRefund_fee($this->price * 100);
         $input->SetOut_refund_no($strRefundNo);
         $input->SetOp_user_id(\WxPayConfig::MCHID);
 
