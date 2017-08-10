@@ -14,7 +14,7 @@ class AddNumberInOrderTable extends Migration
     public function up()
     {
         Schema::table(CreateOrderTable::$tableName, function (Blueprint $table) {
-            $table->string('number')->notnull()->comment('订单编号');
+            $table->string('number')->nullable()->comment('订单编号');
         });
     }
 
