@@ -640,17 +640,29 @@
                     label: '继续添加'
                 });
 
+                var strImagePaths = [];
+                function addProductImages(imgIndex) {
+                    getFileObject(strImagePaths[imgIndex], function (fileObject) {
+                        uploader.addFile(fileObject);
+
+                        // 继续添加
+                        if (strImagePaths.length > imgIndex + 1) {
+                            addProductImages(imgIndex + 1);
+                        }
+                    });
+                }
+
                 uploader.on('ready', function () {
                     window.uploader = uploader;
 
                     // 读取图片文件
                     @if (!empty($product))
                         @foreach ($product->images as $img)
-                            getFileObject('{{$img->getImageUrl()}}', function (fileObject) {
-                                uploader.addFile(fileObject);
-                            });
+                            strImagePaths.push('{{$img->getImageUrl()}}');
                         @endforeach
-                        @endif
+
+                        addProductImages(0);
+                    @endif
                 });
 
                 // 当有文件添加进来时执行，负责view的创建
