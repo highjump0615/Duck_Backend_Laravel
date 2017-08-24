@@ -9,6 +9,7 @@ use App\Product;
 use DateTime;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,14 +31,95 @@ class OrderController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getOrderList(Request $request) {
-        $orders = Order::with('product')
+        $queryOrder = Order::with('product')
             ->with('spec')
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('created_at', 'desc');
+
+        // 开始日期
+        $dateStart = $request->input('start_date');
+        if (!empty($dateStart)) {
+            $queryOrder->whereDate('created_at', '>=', $dateStart);
+        }
+
+        // 结束日期
+        $dateEnd = $request->input('end_date');
+        if (!empty($dateEnd)) {
+            $queryOrder->whereDate('created_at', '<=', $dateEnd);
+        }
+
+        // 商品
+        $product = $request->input('product');
+        if (!empty($product)) {
+            $queryOrder->whereHas('product', function($query) use ($product) {
+                $query->where('name', 'like', '%' . $product. '%');
+            });
+        }
+
+        // 配送渠道
+        $channel = $request->input('channel');
+        if ($channel != null) {
+            if ($channel == Order::DELIVER_EXPRESS || $channel == Order::DELIVER_SELF) {
+                $queryOrder->where('channel', $channel);
+            }
+        }
+
+        // 是否拼团
+        $groupbuy = $request->input('gropubuy');
+        if (!empty($groupbuy)) {
+            // 拼团
+            if ($groupbuy == 1) {
+                $queryOrder->whereNotNull('groupbuy_id');
+            }
+            // 非拼团
+            else {
+                $queryOrder->whereNull('groupbuy_id');
+            }
+        }
+
+        // 门店
+        $store = $request->input('store');
+        if (!empty($store)) {
+            $queryOrder->whereHas('store', function($query) use ($store) {
+                $query->where('name', 'like', '%' . $store. '%');
+            });
+        }
+
+        // 用户名
+        $name = $request->input('name');
+        if (!empty($name)) {
+            $queryOrder->where('name', 'like', '%' . $name. '%');
+        }
+
+        // 手机号
+        $phone = $request->input('phone');
+        if (!empty($phone)) {
+            $queryOrder->where('phone', 'like', '%' . $phone. '%');
+        }
+
+        // 订单状态
+        $status = $request->input('status');
+        if (!empty($status)) {
+            $queryOrder->where('status', $status);
+        }
+
+        $orders = $queryOrder->paginate();
 
         return view('order.list', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
-            'orders'=>$orders,
+
+            // 筛选字段
+            'start_date' => $dateStart,
+            'end_date' => $dateEnd,
+            'produdct' => $product,
+            'channel' => $channel,
+            'groupbuy' => $groupbuy,
+            'store' => $store,
+            'name' => $name,
+            'phone' => $phone,
+            'status' => $status,
+
+            // 数据
+            'orders'=> $orders,
         ]));
     }
 
@@ -54,19 +136,87 @@ class OrderController extends Controller
             'order'=>$order
         ]));
     }
-    
+
+    /**
+     * 输入快递单号设置发货状态
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateOrder(Request $request, $id) {
         $order = Order::find($id);
-        
-        if($request->has('deliver_code')) {
-            $order->deliver_code = $request->input('deliver_code');
-            $order->status = Order::STATUS_SENT;
+        $errMsg = '';
+
+        if ($order->status == Order::STATUS_INIT || $order->status == Order::STATUS_SENT) {
+            if ($request->has('deliver_code')) {
+                $order->deliver_code = $request->input('deliver_code');
+            }
+
+            // 状态历史只有变活的时候才添加
+            if ($order->status == Order::STATUS_INIT) {
+                $order->status = Order::STATUS_SENT;
+                $order->addStatusHistory();
+
+                // 推送消息，拼团成功
+                $nctrl = new NotificationController();
+
+                $strToken = $nctrl->getAccessToken();
+                $params = array();
+                $params["keyword1"] = [
+                    "value" => $order->product->name,
+                ];
+                $params["keyword2"] = [
+                    "value" => $order->number,
+                ];
+                $params["keyword3"] = [
+                    "value" => $order->address,
+                ];
+                $params["keyword4"] = [
+                    "value" => $order->name,
+                ];
+                $params["keyword5"] = [
+                    "value" => $order->deliver_code,
+                ];
+
+                $nctrl->sendPushNotification($strToken, [
+                    "touser" => $order->customer->wechat_id,
+                        "template_id" => "4vzFUADZnrupzQqnpUBAW7F8GjQqNT8sL1he0aQ9R3E",
+                    "form_id" => $order->formid,
+                    "data" => $params,
+                ]);
+            }
 
             $order->save();
-            $order->addStatusHistory();
+        }
+        else if ($order->status == Order::STATUS_REFUND_REQUESTED) {
+            // 确认退款
+            $refundInfo = $order->refundOrder($order);
+
+            if (!empty($refundInfo['err_code_des'])) {
+                $errMsg = $refundInfo['err_code_des'];
+            }
         }
 
-        return redirect()->to(url('/order')."/detail/".$id);
+        return view('order.detail', array_merge($this->viewBaseParams, [
+            'page' =>$this->menu . '.list',
+            'order'=>$order,
+            'errMsg'=>$errMsg
+        ]));
+    }
+
+    /**
+     * 退款
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function refundOrder(Request $request, $id) {
+        $order = Order::find($id);
+        $refundInfo = $order->refundOrder();
+
+        return response()->json([
+            'status' => $refundInfo['result_code'],
+        ]);
     }
 
     /**
@@ -79,6 +229,8 @@ class OrderController extends Controller
         $dPrice = $request->input('price');
         $nCustomerId = $request->input('customer_id');
 
+        $strTradeNo = time() . uniqid();
+
         $product = Product::find($nProductId);
         $customer = Customer::find($nCustomerId);
 
@@ -86,7 +238,7 @@ class OrderController extends Controller
         $worder = new \WxPayUnifiedOrder();
 
         $worder->SetBody($product->name);
-        $worder->SetOut_trade_no(time() . uniqid() );
+        $worder->SetOut_trade_no($strTradeNo);
         $worder->SetTotal_fee(intval($dPrice * 100));
         $worder->SetNotify_url("http://paysdk.weixin.qq.com/example/notify.php");
         $worder->SetTrade_type("JSAPI");
@@ -98,6 +250,7 @@ class OrderController extends Controller
         return response()->json([
             'status' => 'success',
             'result' => $payOrder,
+            'trade_no' => $strTradeNo
         ]);
     }
 
@@ -110,23 +263,30 @@ class OrderController extends Controller
         $nProductId = $request->input('product_id');
         $nCount = $request->input('count');
         $product = Product::find($nProductId);
+        $nChannel = $request->input('channel');
+        $nSpecId = $request->input('spec_id');
 
-        // 获取参数
-        $aryParam = [
-            'customer_id'       => $request->input('customer_id'),
-            'product_id'        => $nProductId,
-            'count'             => $nCount,
-            'name'              => $request->input('name'),
-            'phone'             => $request->input('phone'),
-            'spec_id'           => $request->input('spec_id'),
-            'channel'           => $request->input('channel'),
-            'desc'              => $request->input('desc'),
-            'price'             => $request->input('price'),
-            'pay_status'        => Order::STATUS_PAY_PAID,
-            'status'            => Order::STATUS_INIT,
-        ];
+        $order = new Order();
 
-        $order = Order::create($aryParam);
+        // 设置基础参数
+        $order->customer_id     = $request->input('customer_id');
+        $order->product_id      = $nProductId;
+        $order->count           = $nCount;
+        $order->name            = $request->input('name');
+        $order->phone           = $request->input('phone');
+        if (!empty($nSpecId)) {
+            $order->spec_id     = $nSpecId;
+        }
+        $order->channel         = $nChannel;
+        $order->desc            = $request->input('desc');
+        $order->price           = $request->input('price');
+        $order->trade_no        = $request->input('trade_no');
+
+        $order->formid          = $request->input('formid');
+        $order->formid_group    = $request->input('formid_group');
+
+        $order->pay_status      = Order::STATUS_PAY_PAID;
+        $order->status          = Order::STATUS_INIT;
 
         // 门店自提
         if ($request->has('store_id')) {
@@ -142,6 +302,15 @@ class OrderController extends Controller
         // 拼团设置
         $nGroupBuy = intval($request->input('groupbuy_id'));
         if ($nGroupBuy > 0) {
+            // 拼团已无效
+            $group = Groupbuy::find($nGroupBuy);
+            if (empty($group)) {
+                return response()->json([
+                    'status' => 'fail',
+                    'message' => '此拼团已无效'
+                ]);
+            }
+
             $order->groupbuy_id = $request->input('groupbuy_id');
             $order->status = Order::STATUS_GROUPBUY_WAITING;
         }
@@ -161,6 +330,28 @@ class OrderController extends Controller
 
         $order->save();
 
+        //
+        // 生成订单编号
+        //
+        $dateCurrent = new DateTime("now");
+        $strNumber = "p";
+        if ($nGroupBuy < 0) {
+            $strNumber = "l";
+        }
+        if ($nChannel == Order::DELIVER_EXPRESS) {
+            $strNumber .= "k";
+        }
+        else {
+            $strNumber .= "z";
+        }
+
+        $strNumber .= $dateCurrent->format('ymdHis');
+        $strNumber .= intToString($nProductId, 3);
+        $strNumber .= intToString($order->id, 4);
+
+        $order->number = $strNumber;
+        $order->save();
+
         // 添加订单状态历史
         $order->addStatusHistory();
 
@@ -171,8 +362,10 @@ class OrderController extends Controller
         $product->remain -= $nCount;
         $product->save();
 
+
         return response()->json([
             'status' => 'success',
+            'result' => $order->id
         ]);
     }
 
@@ -205,8 +398,15 @@ class OrderController extends Controller
         foreach ($orders as $order) {
             $orderInfo = $this->getOrderInfoSimple($order);
 
+            $customers = array();
+
+            $orderGroups = $order->groupBuy->orders()->with('customer')->get();
+            foreach ($orderGroups as $og) {
+                $customers[] = $og->customer;
+            }
+
             $orderInfo['groupbuy'] = [
-                'persons' => $order->groupBuy->getPeopleCount(),
+                'persons' => $customers,
                 'remain_time' => $order->groupBuy->getRemainTime(),
             ];
 
@@ -235,15 +435,22 @@ class OrderController extends Controller
         }
 
         $orderInfo['id'] = $order->id;
+        $orderInfo['number'] = $order->number;
         $orderInfo['status_val'] = $order->status;
-        $orderInfo['status'] = Order::getStatusName($order->status);
+        $orderInfo['refund_reason'] = $order->refund_reason;
+        $orderInfo['status'] = Order::getStatusName($order->status, $order->channel);
+        $orderInfo['product_id'] = $order->product->id;
         $orderInfo['product_image'] = $order->product->getThumbnailUrl();
         $orderInfo['product_name'] = $order->product->name;
         $orderInfo['product_price'] = $dPrice;
         $orderInfo['deliver_cost'] = $order->product->deliver_cost;
         $orderInfo['count'] = $order->count;
+
         $orderInfo['is_groupbuy'] = !empty($order->groupbuy_id);
-        $orderInfo['spec'] = $order->spec->name;
+
+        if (!empty($order->spec)) {
+            $orderInfo['spec'] = $order->spec->name;
+        }
         $orderInfo['price'] = $order->price;
         $orderInfo['created_at'] = getStringFromDateTime($order->created_at);
         $orderInfo['channel'] = $order->channel;
@@ -281,7 +488,7 @@ class OrderController extends Controller
     private function getOrdersByDeliverApi(Request $request, $deliveryMode) {
         $query = $this->getBaseOrderQuery($request);
 
-        $orders = $query->where('status', '>', Order::STATUS_GROUPBUY_WAITING)
+        $orders = $query->where('status', '>=', Order::STATUS_INIT)
             ->where('channel', $deliveryMode)
             ->get();
 
@@ -325,9 +532,17 @@ class OrderController extends Controller
         $result['deliver_code'] = getEmptyString($order->deliver_code);
         $result['deliver_cost'] = $order->product->deliver_cost;
 
+        $result['groupbuys'] = array();
+
         // 拼团
         if (!empty($order->groupBuy)) {
-            $result['groupbuy_persons'] = $order->groupBuy->getPeopleCount();
+            $orderGroups = Order::with('customer')
+                ->where('groupbuy_id', $order->groupbuy_id)
+                ->get();
+
+            foreach ($orderGroups as $og) {
+                $result['groupbuys'][] = $og->customer;
+            }
         }
 
         return response()->json([
@@ -355,4 +570,31 @@ class OrderController extends Controller
             'status' => 'success',
         ]);
     }
+
+    /**
+     * 申请退款API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refundRequestApi(Request $request) {
+        $nOrderId = $request->input('order_id');
+        $strReason = $request->input('reason');
+
+        $order = Order::find($nOrderId);
+
+        $order->status = Order::STATUS_REFUND_REQUESTED;
+        $order->refund_reason = Order::REFUND_OTHER;
+        $order->refund_reason_other = $strReason;
+
+        $order->save();
+
+        // 添加订单状态历史
+        $order->addStatusHistory();
+
+        return response()->json([
+            'status' => 'success',
+        ]);
+    }
+
+
 }

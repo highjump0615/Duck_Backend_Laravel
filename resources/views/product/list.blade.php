@@ -43,7 +43,7 @@
                                     <th rowspan="2">运费</th>
                                     <th colspan="3">拼团信息</th>
                                     <th rowspan="2">库存</th>
-                                    <th width="50" rowspan="2">操作</th>
+                                    <th width="80" rowspan="2">操作</th>
                                 </tr>
                                 <tr class="text-c">
                                     <th>人数底线</th>
@@ -64,6 +64,15 @@
                                     <td>{{$p->gb_timeout}}</td>
                                     <td>{{$p->remain}}</td>
                                     <td class="td-manage">
+                                        @if ($p->active)
+                                            <a style="text-decoration:none" class="ml-5" onClick="product_mount(this, '{{$p->id}}')" title="下架">
+                                                <i class="Hui-iconfont">&#xe6de;</i>
+                                            </a>
+                                        @else
+                                            <a style="text-decoration:none" class="ml-5" onClick="product_mount(this, '{{$p->id}}')" title="上架">
+                                                <i class="Hui-iconfont">&#xe6dc;</i>
+                                            </a>
+                                        @endif
                                         <a style="text-decoration:none" class="ml-5" href="{{url('/product')}}/{{$p->id}}/edit" title="编辑">
                                             <i class="Hui-iconfont">&#xe6df;</i>
                                         </a>
@@ -85,7 +94,7 @@
 
 @section('script')
     <script type="text/javascript" src="<?=asset('lib/datatables/1.10.0/jquery.dataTables.min.js') ?>"></script>
-    <script type="text/javascript" src="<?=asset('lib/zTree/v3/js/jquery.ztree.all-3.5.min.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('lib/zTree/v3/js/jquery.ztree.all.min.js')?>"></script>
     <script type="text/javascript">
         var setting = {
             view: {
@@ -117,26 +126,23 @@
         };
 
         var zNodes =[
-                @foreach($categories as $c)
+            @foreach($categories as $c)
             {  id:"{{$c->id}}", pId:0, name:"{{$c->name}}", file:"{{url('/products')}}?cat={{$c->id}}"},
-                @endforeach
+            @endforeach
         ];
 
         $(document).ready(function(){
             var t = $("#treeDemo");
             t = $.fn.zTree.init(t, setting, zNodes);
-            demoIframe = $("#testIframe");
-            demoIframe.bind("load", loadReady);
-            var zTree = $.fn.zTree.getZTreeObj("tree");
-            //zTree.selectNode(zTree.getNodeByParam("id",'1'));
+
+            @if (!empty($category))
+            t.selectNode(t.getNodeByParam("id", '{{$category->id}}'));
+            @endif
 
             $('.table-sort').dataTable({
                 'ordering': false
             });
         });
-
-        function loadReady(){
-        }
 
         /*图片-删除*/
         function product_del(obj,id){
@@ -160,5 +166,53 @@
                 });
             });
         }
+
+        /**
+         * 上架/下架
+         * @param obj
+         * @param id
+         * @param bMount
+         */
+        function product_mount(obj, id) {
+            var nMount = 0;
+            if ($(obj).attr('title') === '上架') {
+                nMount = 1;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '{{url('/product/mount')}}',
+                data: {
+                    'product_id': id,
+                    '_token': '{{ csrf_token() }}',
+                    'mount': nMount
+                },
+                success: function (data) {
+                    var strMsg;
+
+                    if (nMount) {
+                        strMsg = '已上架';
+                        $(obj).attr('title', '下架');
+                        $(obj).find('i').html('&#xe6de;');
+                    }
+                    else {
+                        strMsg = '已下架';
+                        $(obj).attr('title', '上架');
+                        $(obj).find('i').html('&#xe6dc;');
+                    }
+
+                    layer.msg(strMsg,{icon:1,time:1000});
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+                complete: function (data) {
+                    $(obj).removeClass('disabled-control');
+                }
+            });
+
+            $(obj).addClass('disabled-control');
+        }
+
     </script>
 @endsection

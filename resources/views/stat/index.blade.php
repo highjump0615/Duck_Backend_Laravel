@@ -112,10 +112,10 @@
                         </thead>
                         <tbody>
                         <tr class="text-c">
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>{{$stat[0]}}</td>
+                            <td>{{$stat[1]}}</td>
+                            <td>{{$stat[2]}}</td>
+                            <td>{{$stat[3]}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -129,7 +129,6 @@
 
 @section('script')
     <script type="text/javascript" src="<?=asset('lib/My97DatePicker/4.8/WdatePicker.js') ?>"></script>
-    <script type="text/javascript" src="<?=asset('lib/datatables/1.10.0/jquery.dataTables.min.js') ?>"></script>
     <script type="text/javascript" src="<?=asset('lib/chosen/chosen.jquery.min.js') ?>"></script>
     <script type="text/javascript">
 

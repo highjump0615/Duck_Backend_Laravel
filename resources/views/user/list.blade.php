@@ -50,19 +50,38 @@
                                 <td>{{$user->role->name}}</td>
                                 <td>{{$user->created_at}}</td>
                                 <td class="td-manage">
-                                    <a title="编辑"
-                                       href="javascript:;"
-                                       onclick="admin_edit('管理员编辑', '{{url("/user/detail")}}/{{$user->id}}','1','800','400')"
-                                       class="ml-5"
-                                       style="text-decoration:none">
-                                        <i class="Hui-iconfont">&#xe6df;</i>
-                                    </a>
-                                    <!-- 不能删除admin账号 -->
-                                    @if ($user->id > 1)
-                                    <a title="删除" href="javascript:;" onclick="admin_del(this)" class="ml-5" style="text-decoration:none">
-                                        <i class="Hui-iconfont">&#xe6e2;</i>
-                                    </a>
+                                    @if ($user->role_id == 1 && $currentUser->role_id == 2)
+                                        <!-- 编辑 -->
+                                        <a title="编辑"
+                                           href="javascript:;"
+                                           class="ml-5"
+                                           style="text-decoration:none">
+                                            <i class="Hui-iconfont disabled-control">&#xe6df;</i>
+                                        </a>
+                                        <!-- 删除 -->
+                                        @if ($user->id > 1)
+                                            <a title="删除" href="javascript:;" class="ml-5" style="text-decoration:none">
+                                                <i class="Hui-iconfont disabled-control">&#xe6e2;</i>
+                                            </a>
+                                        @endif
+                                    @else
+                                        <!-- 编辑 -->
+                                        <a title="编辑"
+                                           href="javascript:;"
+                                           onclick="admin_edit('管理员编辑', '{{url("/user/detail")}}/{{$user->id}}','1','800','400')"
+                                           class="ml-5"
+                                           style="text-decoration:none">
+                                            <i class="Hui-iconfont">&#xe6df;</i>
+                                        </a>
+                                        <!-- 删除 -->
+                                        @if ($user->id > 1)
+                                            <a title="删除" href="javascript:;" onclick="admin_del(this)" class="ml-5" style="text-decoration:none">
+                                                <i class="Hui-iconfont">&#xe6e2;</i>
+                                            </a>
+                                        @endif
                                     @endif
+                                    <!-- 不能删除admin账号 -->
+
                                 </td>
                             </tr>
                         @endforeach
@@ -100,7 +119,7 @@
                 // 删除
                 $.ajax({
                     type: 'GET',
-                    url: '/user/remove/' + nId,
+                    url: '{{url("/user/remove")}}' + '/' + nId,
                     data: {},
                     success: function (data) {
                         trObj.remove();

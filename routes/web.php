@@ -25,6 +25,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/category', 'ProductController@showCategory');
     Route::get('/category_add', 'ProductController@category_add');
     Route::post('/category', 'ProductController@saveCategory');
+    Route::post('/category/updateOrder', 'ProductController@updateCategoryOrder');
+    Route::delete('/category', 'ProductController@deleteCategory');
 
 
     Route::get('/products', 'ProductController@showProductList');
@@ -32,15 +34,19 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/product/{id}/edit', 'ProductController@showProduct');
     Route::post('/product', 'ProductController@saveProduct');
     Route::post('/product/uploadImage', 'ProductController@uploadImage');
+    Route::post('/product/mount', 'ProductController@mountProduct');
     Route::delete('/product', 'ProductController@deleteProduct');
 
+    // 规格
     Route::post('/rule', 'ProductController@addRule');
-    
+    Route::delete('/rule', 'ProductController@deleteRule');
+
 
 	// 订单管理
     Route::get('/', 'OrderController@getOrderList');
     Route::get('/order/detail/{id}', 'OrderController@showOrder');
     Route::post('/order/{id}', 'OrderController@updateOrder');
+    Route::post('/order/refund/{id}', 'OrderController@refundOrder');
 
     // 宣传管理
     Route::get('/ads', 'AdsController@showAds');

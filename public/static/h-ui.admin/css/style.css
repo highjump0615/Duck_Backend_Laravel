@@ -1,3 +1,32 @@
 @charset "utf-8";
 /* 你自己的样式 */
 
+/* 订单列表 筛选字段 */
+.filter-nav {
+    padding-top: 20px;
+}
+.filter-nav .input-text {
+    width: 120px;
+}
+.filter-nav .newline {
+    margin-top: 10px;
+}
+.filter-nav .fields-div {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.pull-right {
+    float: right;
+}
+
+/* layer 样式 */
+
+/* ztree 插件 */
+.tmpzTreeMove_arrow {
+    z-index: 1;
+}
+
+.disabled-control {
+    opacity: 0.3;
+}

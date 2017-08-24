@@ -6,11 +6,17 @@
             padding-right: 10px;
         }
 
+        .prod-spec > label a {
+            text-decoration: none;
+            visibility: hidden;
+        }
+
         .add-spec {
             margin-top: 10px;
         }
     </style>
     <link href="<?=asset('lib/webuploader/0.1.5/webuploader.css')?>" rel="stylesheet" type="text/css"/>
+
 @endsection
 @section('content')
 
@@ -32,7 +38,7 @@
         </nav>
 
         <div class="page-container">
-            <form action="{{url('/product')}}" method="post" class="form form-horizontal" id="form-product" enctype="multipart/form-data">
+            <form class="form form-horizontal" id="form-product" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 @if(isset($product))
                     <input type="hidden" name="product_id" value="{{$product->id}}">
@@ -44,8 +50,16 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text"
                                class="input-text"
+                               onkeyup="$.Huitextarealength(this, 20)"
                                @if(isset($product)) value="{{$product->name}}" @endif
                                name="name">
+                        <p class="textarea-numberbar">
+                            @if (!empty($product))
+                                <em class="textarea-length">{{strlen($product->name)}}</em>/20
+                            @else
+                                <em class="textarea-length">0</em>/20
+                            @endif
+                        </p>
                     </div>
                 </div>
 
@@ -81,6 +95,7 @@
                                         <input type="checkbox" value="1" name="spec{{$s->id}}" />
                                     @endif
                                     {{$s->name}}
+                                    <a data-spec="{{$s->id}}"><i class="Hui-iconfont">&#xe6a6;</i></a>
                                 </label>
                             @endforeach
                         </div>
@@ -99,7 +114,7 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" name="price" id="price" placeholder=""
                                @if(isset($product)) value="{{$product->price}}" @endif class="input-text"
-                               style="width:90%">
+                               style="width:80%">
                         元
                     </div>
                 </div>
@@ -110,7 +125,7 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" name="deliver_cost" id="" placeholder=""
                                @if(isset($product)) value="{{$product->deliver_cost}}" @endif class="input-text"
-                               style="width:90%">
+                               style="width:80%">
                         元
                     </div>
                 </div>
@@ -196,17 +211,19 @@
                     </div>
                 </div>
 
-
-                <div class="row cl">
-                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                        <button id="butSubmit" class="btn btn-primary radius" type="submit">
-                            <i class="Hui-iconfont">&#xe632;</i>
-                            <span>保存并提交</span>
-                        </button>
-                        <button onClick="onCancel();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
-                    </div>
-                </div>
             </form>
+
+            <!-- 提交按钮 -->
+            <div class="row cl mt-30">
+                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                    <button id="butSubmit" class="btn btn-primary radius">
+                        <i class="Hui-iconfont">&#xe632;</i>
+                        <span>保存并提交</span>
+                    </button>
+                    <button onClick="onCancel();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -218,10 +235,28 @@
     <script type="text/javascript" src="<?=asset('lib/jquery.validation/1.14.0/messages_zh.js')?>"></script>
 
     <script type="text/javascript" src="<?=asset('lib/webuploader/0.1.5/webuploader.min.js')?>"></script>
+
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/ueditor.config.js')?>"></script>
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/ueditor.all.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js')?>"></script>
+
     <script>
+
+        // 添加validate规则
+        $.validator.addMethod(
+            'fractionLimit',
+            function (value, element, requiredValue) {
+                // 如果输入的整数，直接通过
+                if (value % 1 === 0) {
+                    return true;
+                }
+
+                // 小数，检查位数
+                var nDigits = value.toString().split('.')[1].length;
+                return nDigits <= requiredValue;
+            },
+            '不能输入2位以上小数'
+        );
 
         // WebUploader实例
         var uploader;
@@ -248,6 +283,43 @@
             });
         };
 
+        function setDeleteSpec() {
+            //
+            // 删除规格
+            //
+            $('.prod-spec > label').hover(function() {
+                $(this).find('a').css('visibility', 'visible');
+            }, function() {
+                $(this).find('a').css('visibility', 'hidden');
+            });
+
+            $('.prod-spec > label a').click(function(e) {
+                e.preventDefault();
+
+                var nSpecId = $(this).data('spec');
+                var objSpec = $(this).parent();
+
+                layer.confirm('确定删除此规格吗？', function(index) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{url('/rule')}}',
+                        data: {
+                            'id': nSpecId,
+                            "_token": '{{ csrf_token() }}'
+                        },
+                        success: function (data) {
+                            // 删除该规格
+                            objSpec.remove();
+                            layer.close(index);
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
+                });
+            });
+        }
+
         $(function () {
             var objEditor = $('#editor');
             objEditor.css('height', '400px');
@@ -271,6 +343,8 @@
                 readURL(this);
             });
 
+            setDeleteSpec();
+
             var objForm = $("#form-product");
 
             objForm.validate({
@@ -282,7 +356,9 @@
                         required: true
                     },
                     price: {
-                        required: true
+                        required: true,
+                        number: true,
+                        fractionLimit: 2
                     },
                     deliver_cost: {
                         required: true
@@ -310,7 +386,7 @@
 
                 if (uploader.getFiles().length <= 0) {
                     alert('请添加图片');
-                    return;
+                    return false;
                 }
 
                 var sendData = new FormData();
@@ -353,6 +429,12 @@
 
                 enableSubmit('butSubmit', false);
                 $('#butSubmit span').text('正在提交...');
+
+                return false;
+            });
+
+            $('#butSubmit').click(function(e) {
+                objForm.submit();
             });
         });
 
@@ -516,7 +598,8 @@
                     disableGlobalDnd: true,
                     fileNumLimit: 300,
                     fileSizeLimit: 200 * 1024 * 1024,    // 200 M
-                    fileSingleSizeLimit: 50 * 1024 * 1024    // 50 M
+                    fileSingleSizeLimit: 50 * 1024 * 1024,    // 50 M
+                    threads: 1  // 上传并发数。 允许同时最大上传进程数，为了保证问价上传顺序
                 });
 
                 // 拖拽时不接受 js, txt 文件。
@@ -558,17 +641,29 @@
                     label: '继续添加'
                 });
 
+                var strImagePaths = [];
+                function addProductImages(imgIndex) {
+                    getFileObject(strImagePaths[imgIndex], function (fileObject) {
+                        uploader.addFile(fileObject);
+
+                        // 继续添加
+                        if (strImagePaths.length > imgIndex + 1) {
+                            addProductImages(imgIndex + 1);
+                        }
+                    });
+                }
+
                 uploader.on('ready', function () {
                     window.uploader = uploader;
 
                     // 读取图片文件
                     @if (!empty($product))
                         @foreach ($product->images as $img)
-                            getFileObject('{{$img->getImageUrl()}}', function (fileObject) {
-                                uploader.addFile(fileObject);
-                            });
+                            strImagePaths.push('{{$img->getImageUrl()}}');
                         @endforeach
-                        @endif
+
+                        addProductImages(0);
+                    @endif
                 });
 
                 // 当有文件添加进来时执行，负责view的创建
@@ -938,10 +1033,16 @@
                     enableSubmit('btn-rule-add', true);
 
                     // 添加到主页面
-                    $('.prod-spec').append('<label><input type="checkbox" value="1" name="spec' + data.rule + '" checked /> ' + rule + '</label>');
+                    $('.prod-spec').append('<label>' +
+                        '<input type="checkbox" value="1" name="spec' + data.rule + '" checked /> ' +
+                        rule +
+                        '<a data-spec="' + data.rule + '"><i class="Hui-iconfont">&#xe6a6;</i></a>' +
+                        '</label>');
 
                     // 清空规则输入
                     $('#rule-name').val('');
+
+                    setDeleteSpec();
                 },
                 error: function (data) {
                     enableSubmit('btn-rule-add', true);

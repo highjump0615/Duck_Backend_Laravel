@@ -15,7 +15,7 @@ class AddProductOnOrderTable extends Migration
     {
         Schema::table(CreateOrderTable::$tableName, function (Blueprint $table) {
             $table->unsignedInteger('product_id')->comment('商品');
-            $table->unsignedInteger('spec_id')->comment('规格');
+            $table->unsignedInteger('spec_id')->nullable()->comment('规格');
 
             // 外键
             $table->foreign('product_id')->references('id')

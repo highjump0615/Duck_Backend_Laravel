@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Store;
+use Illuminate\Support\Facades\DB;
+
 class StoreController extends Controller
 {
     public $menu = 'store';
@@ -79,9 +81,24 @@ class StoreController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getStoresApi(Request $request) {
+        $circle_radius = 3959;
+
+        $lat = $request->input('latitude');
+        $lng = $request->input('longitude');
+
+        $stores = DB::select(
+            "SELECT * FROM
+                    (SELECT *, (" . $circle_radius . " * acos(cos(radians(" . $lat . ")) * cos(radians(latitude)) *
+                    cos(radians(longitude) - radians(" . $lng . ")) +
+                    sin(radians(" . $lat . ")) * sin(radians(latitude))))
+                    AS distance
+                    FROM store) AS distances
+                ORDER BY distance;
+            ");
+
         return response()->json([
             'status' => 'success',
-            'result' => Store::get(),
+            'result' => $stores,
         ]);
     }
 }

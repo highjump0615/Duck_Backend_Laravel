@@ -16,6 +16,8 @@ class CreateCustomerTable extends Migration
     public function up()
     {
         Schema::create(CreateCustomerTable::$tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->string('wechat_id')->unique();
             $table->string('name');

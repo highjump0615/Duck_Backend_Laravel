@@ -15,8 +15,16 @@ use File;
 
 class ProductController extends Controller
 {
+    /**
+     * 获取商品
+     * @return mixed
+     */
+    public static function getProducts() {
+        return Product::where('active', Product::STATUS_ACTIVE);
+    }
+
     public function showCategory(Request $request) {
-        $categories = Category::all();
+        $categories = Category::orderBy('sequence')->get();
 
         return view('product.category', [
             'categories'=>$categories,
@@ -47,15 +55,24 @@ class ProductController extends Controller
         $c->name = $request->input('name');
         $c->desc = $request->input('desc');
 
+        // 顺序
+        $nSequence = Category::max('sequence');
+        $c->sequence = $nSequence + 1;
+
         $c->save();
 
         return view('product.category_add', [
             'category'=>$c,
         ]);
     }
-    
+
+    /**
+     * 打开商品列表页面
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showProductList(Request $request) {
-        $categories = Category::all();
+        $categories = Category::orderBy('sequence')->get();
 
         if($request->has('cat')) {
             $c = Category::find($request->input('cat'));
@@ -202,10 +219,44 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * 上架/下架
+     * @param Request $request
+     */
+    public function mountProduct(Request $request) {
+        $pid = $request->input('product_id');
+        $mount = $request->input('mount');
+
+        $product = Product::find($pid);
+        $product->active = $mount;
+        $product->save();
+    }
+
+    /**
+     * 删除商品
+     * @param Request $request
+     */
     public function deleteProduct(Request $request) {
         $pid = $request->input('product_id');
-        $p = Product::find($pid);
-        $p->delete();
+        Product::find($pid)->delete();
+    }
+
+    /**
+     * 删除分类
+     * @param Request $request
+     */
+    public function deleteCategory(Request $request) {
+        $cid = $request->input('id');
+        Category::find($cid)->delete();
+    }
+
+    /**
+     * 删除规格
+     * @param Request $request
+     */
+    public function deleteRule(Request $request) {
+        $rid = $request->input('id');
+        Spec::find($rid)->delete();
     }
 
     /**
@@ -249,7 +300,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCategoriesApi(Request $request) {
-        $categories = Category::get(['id', 'name']);
+        $categories = Category::orderBy('sequence')->get(['id', 'name']);
 
         return response()->json([
             'status' => 'success',
@@ -263,7 +314,8 @@ class ProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getProductsApi($categoryId) {
-        $products = Product::where('category_id', $categoryId)
+        $products = ProductController::getProducts()
+            ->where('category_id', $categoryId)
             ->get();
 
         $result = [];
@@ -288,13 +340,15 @@ class ProductController extends Controller
      * @param $productId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getProductDetailApi($productId) {
+    public function getProductDetailApi(Request $request, $productId) {
+        $customerId =  $request->input('customer_id');
+
         $product = Product::with('images')
             ->with('specs')
             ->find($productId);
 
         // 获取拼团
-        $groubBuys = Groupbuy::whereHas('orders', function($query) use ($productId) {
+        $groubBuys = Groupbuy::whereHas('orders', function($query) use ($productId, $customerId) {
             $query->where('product_id', $productId);
         })->get();
 
@@ -328,7 +382,23 @@ class ProductController extends Controller
 
         // 拼团
         $result['groupbuys'] = [];
+
         foreach ($groubBuys as $gb) {
+            $bSkip = false;
+
+            // 自己开启的除外
+            $gOrders = $gb->orders;
+            foreach ($gOrders as $go) {
+                if ($go->customer_id == $customerId) {
+                    $bSkip = true;
+                    break;
+                }
+            }
+
+            if ($bSkip) {
+                continue;
+            }
+
             $gbInfo = [
                 'id' => $gb->id,
                 'persons' => $gb->getPeopleCount(),
@@ -336,7 +406,7 @@ class ProductController extends Controller
             ];
 
             // 发起人
-            $starter = $gb->orders()->first()->customer;
+            $starter = $gOrders->first()->customer;
             $gbInfo['customer'] = [
                 'name' => $starter->name,
                 'image_url' => $starter->image_url,
@@ -348,6 +418,32 @@ class ProductController extends Controller
         return response()->json([
             'status' => 'success',
             'result' => $result,
+        ]);
+    }
+
+    /**
+     * 设置分类顺序
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateCategoryOrder(Request $request) {
+        $objectId =  $request->input('object_id');
+        $targetId =  $request->input('target_id');
+
+        $nSeq = 0;
+
+        if ($targetId > 0) {
+            $nSeq = Category::find($targetId)->sequence;
+        }
+
+        // 增加顺序值
+        Category::where('sequence', '>', $nSeq)->increment('sequence', 1);
+
+        // 设置新的顺序
+        Category::where('id', $objectId)->update(['sequence' => $nSeq + 1]);
+
+        return response()->json([
+            'status' => 'success',
         ]);
     }
 }

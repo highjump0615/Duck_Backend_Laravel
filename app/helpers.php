@@ -50,3 +50,16 @@ function getStringFromDateTime($date) {
 function getEmptyString($value) {
     return !empty($value) ? $value : '';
 }
+
+/**
+ * int转string
+ * @param $value
+ * @param $length
+ * @return string
+ */
+function intToString($value, $length) {
+    $nMax = 10 * $length;
+    $nValue = $value % $nMax;
+
+    return str_pad(strval($nValue), $length, "0", STR_PAD_LEFT);
+}
