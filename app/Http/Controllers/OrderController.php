@@ -216,8 +216,14 @@ class OrderController extends Controller
         $order = Order::find($id);
         $refundInfo = $order->refundOrder();
 
+        $errMsg = '';
+        if (!empty($refundInfo['err_code_des'])) {
+            $errMsg = $refundInfo['err_code_des'];
+        }
+
         return response()->json([
             'status' => $refundInfo['result_code'],
+            'errMsg' => $errMsg,
         ]);
     }
 
