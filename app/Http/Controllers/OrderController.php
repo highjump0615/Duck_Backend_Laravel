@@ -8,10 +8,12 @@ use App\Order;
 use App\Product;
 use DateTime;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Mockery\Exception;
 
 require_once app_path() . "/lib/Wxpay/WxPay.Api.php";
 
@@ -266,102 +268,120 @@ class OrderController extends Controller
         $nChannel = $request->input('channel');
         $nSpecId = $request->input('spec_id');
 
-        $order = new Order();
+        try {
+            $order = new Order();
 
-        // 设置基础参数
-        $order->customer_id     = $request->input('customer_id');
-        $order->product_id      = $nProductId;
-        $order->count           = $nCount;
-        $order->name            = $request->input('name');
-        $order->phone           = $request->input('phone');
-        if (!empty($nSpecId)) {
-            $order->spec_id     = $nSpecId;
-        }
-        $order->channel         = $nChannel;
-        $order->desc            = $request->input('desc');
-        $order->price           = $request->input('price');
-        $order->trade_no        = $request->input('trade_no');
+            // 设置基础参数
+            $order->customer_id = $request->input('customer_id');
+            $order->product_id = $nProductId;
+            $order->count = $nCount;
+            $order->name = $request->input('name');
+            $order->phone = $request->input('phone');
+            if (!empty($nSpecId)) {
+                $order->spec_id = $nSpecId;
+            }
+            $order->channel = $nChannel;
+            $order->desc = $request->input('desc');
+            $order->price = $request->input('price');
+            $order->trade_no = $request->input('trade_no');
 
-        $order->formid          = $request->input('formid');
-        $order->formid_group    = $request->input('formid_group');
+            $order->formid = $request->input('formid');
+            $order->formid_group = $request->input('formid_group');
 
-        $order->pay_status      = Order::STATUS_PAY_PAID;
-        $order->status          = Order::STATUS_INIT;
+            $order->pay_status = Order::STATUS_PAY_PAID;
+            $order->status = Order::STATUS_INIT;
 
-        // 门店自提
-        if ($request->has('store_id')) {
-            $order->store_id = $request->input('store_id');
-        }
-        // 快递
-        if ($request->has('address')) {
-            $order->address = $request->input('address');
-            $order->area = $request->input('area');
-            $order->zipcode = $request->input('zipcode');
-        }
-
-        // 拼团设置
-        $nGroupBuy = intval($request->input('groupbuy_id'));
-        if ($nGroupBuy > 0) {
-            // 拼团已无效
-            $group = Groupbuy::find($nGroupBuy);
-            if (empty($group)) {
-                return response()->json([
-                    'status' => 'fail',
-                    'message' => '此拼团已无效'
-                ]);
+            // 门店自提
+            if ($request->has('store_id')) {
+                $order->store_id = $request->input('store_id');
+            }
+            // 快递
+            if ($request->has('address')) {
+                $order->address = $request->input('address');
+                $order->area = $request->input('area');
+                $order->zipcode = $request->input('zipcode');
             }
 
-            $order->groupbuy_id = $request->input('groupbuy_id');
-            $order->status = Order::STATUS_GROUPBUY_WAITING;
+            // 拼团设置
+            $nGroupBuy = intval($request->input('groupbuy_id'));
+            if ($nGroupBuy > 0) {
+                // 拼团已无效
+                $group = Groupbuy::find($nGroupBuy);
+                if (empty($group)) {
+                    return response()->json([
+                        'status' => 'fail',
+                        'message' => '此拼团已无效'
+                    ]);
+                }
+
+                $order->groupbuy_id = $request->input('groupbuy_id');
+                $order->status = Order::STATUS_GROUPBUY_WAITING;
+            } else if ($nGroupBuy == 0) {
+                // 计算到期时间
+                $timeCurrent = new DateTime("now");
+                $timeCurrent->add(new \DateInterval('PT' . $product->gb_timeout . 'H'));
+
+                $aryParam = [
+                    'end_at' => getStringFromDateTime($timeCurrent)
+                ];
+                $groupBuy = Groupbuy::create($aryParam);
+                $order->groupbuy_id = $groupBuy->id;
+
+                $order->status = Order::STATUS_GROUPBUY_WAITING;
+            }
+
+            $order->save();
+
+            //
+            // 生成订单编号
+            //
+            $dateCurrent = new DateTime("now");
+            $strNumber = "p";
+            if ($nGroupBuy < 0) {
+                $strNumber = "l";
+            }
+            if ($nChannel == Order::DELIVER_EXPRESS) {
+                $strNumber .= "k";
+            } else {
+                $strNumber .= "z";
+            }
+
+            $strNumber .= $dateCurrent->format('ymdHis');
+            $strNumber .= intToString($nProductId, 3);
+            $strNumber .= intToString($order->id, 4);
+
+            $order->number = $strNumber;
+            $order->save();
+
+            // 添加订单状态历史
+            $order->addStatusHistory();
+
+            // 查看拼团状况
+            $order->checkGroupBuy();
+
+            // 减少库存
+            $product->remain -= $nCount;
+            $product->save();
         }
-        else if ($nGroupBuy == 0) {
-            // 计算到期时间
-            $timeCurrent = new DateTime("now");
-            $timeCurrent->add(new \DateInterval('PT' . $product->gb_timeout . 'H'));
+        catch (Exception $e) {
+            //
+            // 退款
+            //
+            $strRefundNo = time() . uniqid();
 
-            $aryParam = [
-                'end_at' => getStringFromDateTime($timeCurrent)
-            ];
-            $groupBuy = Groupbuy::create($aryParam);
-            $order->groupbuy_id = $groupBuy->id;
+            $dPrice = floatval($request->input('price'));
 
-            $order->status = Order::STATUS_GROUPBUY_WAITING;
+            $input = new \WxPayRefund();
+            $input->SetOut_trade_no($request->input('trade_no'));
+            $input->SetTotal_fee($dPrice * 100);
+            $input->SetRefund_fee($dPrice * 100);
+            $input->SetOut_refund_no($strRefundNo);
+            $input->SetOp_user_id(\WxPayConfig::MCHID);
+
+            \WxPayApi::refund($input);
+
+            return response()->json(['status' => 'fail'], 401);
         }
-
-        $order->save();
-
-        //
-        // 生成订单编号
-        //
-        $dateCurrent = new DateTime("now");
-        $strNumber = "p";
-        if ($nGroupBuy < 0) {
-            $strNumber = "l";
-        }
-        if ($nChannel == Order::DELIVER_EXPRESS) {
-            $strNumber .= "k";
-        }
-        else {
-            $strNumber .= "z";
-        }
-
-        $strNumber .= $dateCurrent->format('ymdHis');
-        $strNumber .= intToString($nProductId, 3);
-        $strNumber .= intToString($order->id, 4);
-
-        $order->number = $strNumber;
-        $order->save();
-
-        // 添加订单状态历史
-        $order->addStatusHistory();
-
-        // 查看拼团状况
-        $order->checkGroupBuy();
-
-        // 减少库存
-        $product->remain -= $nCount;
-        $product->save();
-
 
         return response()->json([
             'status' => 'success',
