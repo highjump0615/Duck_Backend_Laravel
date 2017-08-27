@@ -58,7 +58,7 @@ function getEmptyString($value) {
  * @return string
  */
 function intToString($value, $length) {
-    $nMax = 10 * $length;
+    $nMax = pow(10, $length);
     $nValue = $value % $nMax;
 
     return str_pad(strval($nValue), $length, "0", STR_PAD_LEFT);
