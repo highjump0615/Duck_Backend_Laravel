@@ -65,6 +65,7 @@ class GroupbuyTimeoutCron extends Command
 
                 // 状态设置为失败
                 $o->status = Order::STATUS_GROUPBUY_CANCELLED;
+                $o->refund_reason = Order::REFUND_GROUPBUY_CANCEL;
                 $o->save();
                 $o->addStatusHistory();
 
