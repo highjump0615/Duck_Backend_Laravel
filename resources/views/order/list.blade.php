@@ -145,6 +145,7 @@
                                 <th>门店</th>
                                 <th>金额</th>
                                 <th>订单状态</th>
+                                <th>下单时间</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -169,6 +170,7 @@
                                 </td>
                                 <td><span class="price">{{$o->price}}</span> 元</td>
                                 <td class="td-status">{{\App\Order::getStatusName($o->status, $o->channel)}}</td>
+                                <td>{{$o->created_at}}</td>
                                 <td class="td-manage">
                                     <a style="text-decoration:none"
                                        class="ml-5"

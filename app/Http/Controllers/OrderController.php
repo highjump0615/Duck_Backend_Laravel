@@ -156,36 +156,42 @@ class OrderController extends Controller
 
             // 状态历史只有变活的时候才添加
             if ($order->status == Order::STATUS_INIT) {
-                $order->status = Order::STATUS_SENT;
-                $order->addStatusHistory();
+                if ($order->channel == Order::DELIVER_EXPRESS) {
+                    $order->status = Order::STATUS_SENT;
 
-                // 推送消息，拼团成功
-                $nctrl = new NotificationController();
+                    // 推送消息，发货
+                    $nctrl = new NotificationController();
 
-                $strToken = $nctrl->getAccessToken();
-                $params = array();
-                $params["keyword1"] = [
-                    "value" => $order->product->name,
-                ];
-                $params["keyword2"] = [
-                    "value" => $order->number,
-                ];
-                $params["keyword3"] = [
-                    "value" => $order->address,
-                ];
-                $params["keyword4"] = [
-                    "value" => $order->name,
-                ];
-                $params["keyword5"] = [
-                    "value" => $order->deliver_code,
-                ];
+                    $strToken = $nctrl->getAccessToken();
+                    $params = array();
+                    $params["keyword1"] = [
+                        "value" => $order->product->name,
+                    ];
+                    $params["keyword2"] = [
+                        "value" => $order->number,
+                    ];
+                    $params["keyword3"] = [
+                        "value" => $order->address,
+                    ];
+                    $params["keyword4"] = [
+                        "value" => $order->name,
+                    ];
+                    $params["keyword5"] = [
+                        "value" => $order->deliver_code,
+                    ];
 
-                $nctrl->sendPushNotification($strToken, [
-                    "touser" => $order->customer->wechat_id,
+                    $nctrl->sendPushNotification($strToken, [
+                        "touser" => $order->customer->wechat_id,
                         "template_id" => "4vzFUADZnrupzQqnpUBAW7F8GjQqNT8sL1he0aQ9R3E",
-                    "form_id" => $order->formid,
-                    "data" => $params,
-                ]);
+                        "form_id" => $order->formid,
+                        "data" => $params,
+                    ]);
+                }
+                else {
+                    $order->status = Order::STATUS_RECEIVED;
+                }
+
+                $order->addStatusHistory();
             }
 
             $order->save();
