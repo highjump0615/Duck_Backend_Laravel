@@ -36,7 +36,7 @@
                         <table class="table table-border table-bordered table-bg table-hover table-sort">
                             <thead>
                                 <tr class="text-c">
-                                    <th width="20" rowspan="2">ID</th>
+                                    <th width="25" rowspan="2">ID</th>
                                     <th rowspan="2">名称</th>
                                     <th rowspan="2">分类</th>
                                     <th rowspan="2">原价</th>

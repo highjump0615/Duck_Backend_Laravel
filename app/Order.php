@@ -85,7 +85,7 @@ class Order extends Model
                     return "待发货";
                 }
                 else {
-                    return "待提货";
+                    return "门店备货中";
                 }
             case Order::STATUS_SENT:
                 if ($channel == Order::DELIVER_EXPRESS) {
