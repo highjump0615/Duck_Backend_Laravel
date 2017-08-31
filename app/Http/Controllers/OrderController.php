@@ -13,7 +13,9 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 use Mockery\Exception;
+use Log;
 
 require_once app_path() . "/lib/Wxpay/WxPay.Api.php";
 
@@ -198,7 +200,7 @@ class OrderController extends Controller
         }
         else if ($order->status == Order::STATUS_REFUND_REQUESTED) {
             // 确认退款
-            $refundInfo = $order->refundOrder($order);
+            $refundInfo = $order->refundOrder($this);
 
             if (!empty($refundInfo['err_code_des'])) {
                 $errMsg = $refundInfo['err_code_des'];
@@ -220,7 +222,7 @@ class OrderController extends Controller
      */
     public function refundOrder(Request $request, $id) {
         $order = Order::find($id);
-        $refundInfo = $order->refundOrder();
+        $refundInfo = $order->refundOrder($this);
 
         $errMsg = '';
         if (!empty($refundInfo['err_code_des'])) {
@@ -320,6 +322,10 @@ class OrderController extends Controller
                 // 拼团已无效
                 $group = Groupbuy::find($nGroupBuy);
                 if (empty($group)) {
+                    // 退款
+                    $this->refundOrderCore($request->input('trade_no'), floatval($request->input('price')));
+                    Log::info("Refund in unavailable groupbuy");
+
                     return response()->json([
                         'status' => 'fail',
                         'message' => '此拼团已无效'
@@ -369,28 +375,28 @@ class OrderController extends Controller
             $order->addStatusHistory();
 
             // 查看拼团状况
-            $order->checkGroupBuy();
+            if ($order->checkGroupBuy()) {
+                // 减少库存
+                $product->remain -= $nCount;
+                $product->save();
+            }
+            else {
+                // 拼团失败
+                $order->refundOrder($this);
+                $order->delete();
 
-            // 减少库存
-            $product->remain -= $nCount;
-            $product->save();
+                Log::info("Refund after check groupbuy");
+
+                return response()->json([
+                    'status' => 'fail',
+                    'message' => '来晚了，此拼团已无效'
+                ]);
+            }
         }
         catch (Exception $e) {
-            //
             // 退款
-            //
-            $strRefundNo = time() . uniqid();
-
-            $dPrice = floatval($request->input('price'));
-
-            $input = new \WxPayRefund();
-            $input->SetOut_trade_no($request->input('trade_no'));
-            $input->SetTotal_fee($dPrice * 100);
-            $input->SetRefund_fee($dPrice * 100);
-            $input->SetOut_refund_no($strRefundNo);
-            $input->SetOp_user_id(\WxPayConfig::MCHID);
-
-            \WxPayApi::refund($input);
+            $this->refundOrderCore($request->input('trade_no'), floatval($request->input('price')));
+            Log::info("Refund in exception handler in makeorder");
 
             return response()->json(['status' => 'fail'], 401);
         }
@@ -399,6 +405,30 @@ class OrderController extends Controller
             'status' => 'success',
             'result' => $order->id
         ]);
+    }
+
+    /**
+     * 退款核心
+     * @param $tradeNo
+     * @param $price
+     * @return \成功时返回，其他抛异常
+     */
+    public function refundOrderCore($tradeNo, $price) {
+        $strRefundNo = time() . uniqid();
+
+        $input = new \WxPayRefund();
+        $input->SetOut_trade_no($tradeNo);
+        $input->SetTotal_fee($price * 100);
+        $input->SetRefund_fee($price * 100);
+        $input->SetOut_refund_no($strRefundNo);
+        $input->SetOp_user_id(\WxPayConfig::MCHID);
+
+        $result = \WxPayApi::refund($input);
+        $json = response()->json($result);
+
+        Log::info("Refund " . $tradeNo . " result: " . $json);
+
+        return $result;
     }
 
     /**
