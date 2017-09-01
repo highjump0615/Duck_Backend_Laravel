@@ -135,6 +135,12 @@ class OrderController extends Controller
      */
     public function showOrder(Request $request, $id) {
         $order = Order::find($id);
+
+        // 此订单不存在
+        if (empty($order)) {
+            abort(404);
+        }
+
         return view('order.detail', array_merge($this->viewBaseParams, [
             'page' => $this->menu . '.list',
             'order'=>$order
