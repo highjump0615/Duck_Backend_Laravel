@@ -38,7 +38,7 @@ class StatController extends Controller
 
         $strDateEnd = $request->input('end_date');
         if (!empty($strDateEnd)) {
-            $queryOrder->whereDate('created_at', '<=', $strDateStart);
+            $queryOrder->whereDate('created_at', '<=', $strDateEnd);
         }
 
         $nStoreIds = array();
