@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Groupbuy;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderController;
 use App\Order;
 use App\Product;
 use DateTime;
@@ -58,6 +59,8 @@ class GroupbuyTimeoutCron extends Command
             $nctrl = new NotificationController();
             $strToken = $nctrl->getAccessToken();
 
+            $orderCtrl = new OrderController();
+
             foreach ($orders as $o) {
                 // 恢复商品数量
                 $o->product->remain += $o->count;
@@ -65,11 +68,12 @@ class GroupbuyTimeoutCron extends Command
 
                 // 状态设置为失败
                 $o->status = Order::STATUS_GROUPBUY_CANCELLED;
+                $o->refund_reason = Order::REFUND_GROUPBUY_CANCEL;
                 $o->save();
                 $o->addStatusHistory();
 
                 // 自动退款
-                $o->refundOrder();
+                $o->refundOrder($orderCtrl);
 
                 //
                 // 推送消息，拼团失败

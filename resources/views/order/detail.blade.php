@@ -259,18 +259,18 @@
                 },
                 success: function (data) {
                     if (data.status === 'SUCCESS') {
-                        layer.msg('退款成功', {icon:1,time:1000}, function() {
+                        layer.msg('退款成功', {icon:1,time:2000}, function() {
                             location.reload();
                         });
                     }
                     else {
-                        layer.msg('退款失败', {icon:2,time:1000});
+                        layer.msg('退款失败, ' + data.errMsg, {icon:2,time:10000});
                     }
                 },
                 error: function (data) {
                     console.log(data);
 
-                    layer.msg('退款失败', {icon:2,time:1000});
+                    layer.msg('退款失败', {icon:2,time:2000});
                 },
                 complete: function() {
                     butRefund.removeClass('disabled');

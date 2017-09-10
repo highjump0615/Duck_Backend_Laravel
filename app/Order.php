@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderController;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -85,7 +86,7 @@ class Order extends Model
                     return "待发货";
                 }
                 else {
-                    return "待提货";
+                    return "门店备货中";
                 }
             case Order::STATUS_SENT:
                 if ($channel == Order::DELIVER_EXPRESS) {
@@ -173,11 +174,17 @@ class Order extends Model
      * 查看拼团是否成功
      */
     public function checkGroupBuy() {
+        // 只考虑拼团
+        if (empty($this->groupbuy_id)) {
+            return true;
+        }
+
         $groupBuy = $this->groupBuy;
         $product = $this->product;
 
-        if (empty($groupBuy)) {
-            return;
+        // 超出名额或已成功不存在
+        if (empty($groupBuy) || $groupBuy->getPeopleCount() > $product->gb_count) {
+            return false;
         }
 
         if ($groupBuy->getPeopleCount() == $product->gb_count) {
@@ -217,24 +224,17 @@ class Order extends Model
 
             $groupBuy->delete();
         }
+
+        return true;
     }
 
     /**
      * 进行退款
      * @return \成功时返回，其他抛异常
      */
-    public function refundOrder() {
+    public function refundOrder(OrderController $octrl) {
 
-        $strRefundNo = time() . uniqid();
-
-        $input = new \WxPayRefund();
-        $input->SetOut_trade_no($this->trade_no);
-        $input->SetTotal_fee($this->price * 100);
-        $input->SetRefund_fee($this->price * 100);
-        $input->SetOut_refund_no($strRefundNo);
-        $input->SetOp_user_id(\WxPayConfig::MCHID);
-
-        $refundInfo = \WxPayApi::refund($input);
+        $refundInfo = $octrl->refundOrderCore($this->trade_no, $this->price);
 
         if ($refundInfo['result_code'] == "SUCCESS") {
             // 成功

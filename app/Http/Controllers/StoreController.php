@@ -86,8 +86,10 @@ class StoreController extends Controller
         $lat = $request->input('latitude');
         $lng = $request->input('longitude');
 
-        $stores = DB::select(
-            "SELECT * FROM
+        if (!empty($lat) && $lat != 'undefined' &&
+            !empty($lng) && $lng != 'undefined') {
+            $stores = DB::select(
+                "SELECT * FROM
                     (SELECT *, (" . $circle_radius . " * acos(cos(radians(" . $lat . ")) * cos(radians(latitude)) *
                     cos(radians(longitude) - radians(" . $lng . ")) +
                     sin(radians(" . $lat . ")) * sin(radians(latitude))))
@@ -95,6 +97,10 @@ class StoreController extends Controller
                     FROM store) AS distances
                 ORDER BY distance;
             ");
+        }
+        else {
+            $stores = Store::get();
+        }
 
         return response()->json([
             'status' => 'success',

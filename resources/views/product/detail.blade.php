@@ -599,7 +599,8 @@
                     fileNumLimit: 300,
                     fileSizeLimit: 200 * 1024 * 1024,    // 200 M
                     fileSingleSizeLimit: 50 * 1024 * 1024,    // 50 M
-                    threads: 1  // 上传并发数。 允许同时最大上传进程数，为了保证问价上传顺序
+                    threads: 1,  // 上传并发数。 允许同时最大上传进程数，为了保证问价上传顺序
+                    compress: false
                 });
 
                 // 拖拽时不接受 js, txt 文件。
