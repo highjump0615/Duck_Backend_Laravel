@@ -330,7 +330,8 @@ class OrderController extends Controller
                 if (empty($group)) {
                     // 退款
                     $this->refundOrderCore($request->input('trade_no'), floatval($request->input('price')));
-                    Log::info("Refund in unavailable groupbuy");
+                    Log::info("Refund in unavailable groupbuy: " . $request->input('trade_no'));
+                    Log::info("Order Failed");
 
                     return response()->json([
                         'status' => 'fail',
@@ -387,11 +388,12 @@ class OrderController extends Controller
                 $product->save();
             }
             else {
+                Log::info("Refund after check groupbuy: " . $order->id);
+                Log::info("Order Failed");
+
                 // 拼团失败
                 $order->refundOrder($this);
                 $order->delete();
-
-                Log::info("Refund after check groupbuy");
 
                 return response()->json([
                     'status' => 'fail',
@@ -402,10 +404,13 @@ class OrderController extends Controller
         catch (Exception $e) {
             // 退款
             $this->refundOrderCore($request->input('trade_no'), floatval($request->input('price')));
-            Log::info("Refund in exception handler in makeorder");
+            Log::info("Refund in exception handler in makeorder: " . $request->input('trade_no'));
+            Log::info("Order Failed");
 
             return response()->json(['status' => 'fail'], 401);
         }
+
+        Log::info("Order Success: " . $order->id);
 
         return response()->json([
             'status' => 'success',
