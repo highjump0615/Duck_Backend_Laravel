@@ -6,6 +6,10 @@
 /public/uploads
 /public/ueditor
 /public/attachments
+
+/app/lib/Wxpay/cert
+/app/lib/Wxpay/WxPay.Config.php
+
 Homestead.json
 Homestead.yaml
 .env
